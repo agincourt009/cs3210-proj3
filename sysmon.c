@@ -15,7 +15,7 @@ static struct kprobe probe;
 static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 {
     int ret = 0;
-    if (current->uid != uid)
+    if (current->uid != 396531)
         return 0;
     switch (regs->rax) {
         case __NR_mkdir:
