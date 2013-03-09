@@ -56,7 +56,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
     		}//end if statement		
 	}//end if statement
 
-	else if(input == 0{
+	else if(input == 0){
 		unregister_kprobe(&probe);
 	}//end else if
 
@@ -80,28 +80,12 @@ static int __init sysmon_toggle_module_init(void){
 		proc_entry->owner = THIS_MODULE;
 		proc_entry->read_proc = sysmon_toggle_read_proc;
 		proc_entry->write_proc = sysmon_toggle_write_proc;
-//?		new_process = vmalloc(sizeof(*new_process));
 		printk(KERN_INFO "===============sysmon_toggle_module_init called. Module now loaded.\n");
 	}
 	return rv;
 }
 
 static void __exit sysmon_toggle_module_cleanup(void){
-	struct list_head *temp_thread;
-	struct list_head *next;
-	struct thread_id *traverse_thread;
-
-	printk(KERN_INFO "===============free the list\n");
-	
-	list_for_each_safe(temp_thread, next, &procID->threads){
-		traverse_thread = list_entry(temp_thread, struct thread_id, thread_list);
-		printk(KERN_INFO "===============free tid: %d\n", traverse_thread->tid);
-		list_del(temp_thread);
-//?		vfree(traverse_thread);
-	}
-	
-	printk(KERN_INFO "===============free the procID\n");
-//?	vfree(procID);
 	remove_proc_entry("sysmon_toggle", proc_entry);
 	printk(KERN_INFO "===============sysmon_toggle_module_cleanup called. Module unloaded\n");
 }

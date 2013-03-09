@@ -22,7 +22,7 @@ static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, 
 	int length;  
 	//printk(KERN_INFO "===============entering sysmon_uid_read_proc\n");
 
-	length = sprintf(page, "%d", current->monitor_uid);
+	length = sprintf(page, "%d", current->monitor_container->monitor_uid);
 
   	return length;
 }//end sysmon_uid_read_proc function
@@ -51,7 +51,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 	//printk(KERN_INFO "===============before convert the seed to long long: %s\n", temp);
 	mon_uid = (int)simple_strtol(temp, &end, 10);
 	//printk(KERN_INFO "===============copy the seed: %lld\n", seed);
-	current->monitor_uid = mon_uid;
+	current->monitor_container->monitor_uid = mon_uid;
 
 	return count;
 }//end sysmon_uid_write_proc function
