@@ -1,6 +1,5 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/proc_fs.h>
 #include <linux/vmalloc.h>
@@ -11,6 +10,7 @@
 #include <asm/current.h>
 #include <linux/cdev.h>
 #include <linux/rcupdate.h>
+#include <linux/time.h>
 
 static struct proc_dir_entry *proc_entry;
 static struct kprobe probe;
@@ -21,6 +21,10 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 {
 	int ret = 0;
+	struct monitor_info *mon_info;
+	struct timeval *tv;
+	struct arg_info *args;
+	
 	if (current->uid != 396531)
 	{
         	return 0;
@@ -32,6 +36,29 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
                     	"%lu %d %d args 0x%lu '%s' %d\n",
                     	regs->rax, current->pid, current->tgid,
                     	(uintptr_t)regs->rdi, (char*)regs->rdi, (int)regs->rsi);
+			if(!(list_empty(current->monitor_info_container)==0))
+			{
+				mon_info = vmalloc(sizeof(mon_info));
+				INIT_LIST_HEAD(&mon_info->monitor_flow);
+				list_add_tail(&mon_info->monitor_flow, current->monitor_info_container);
+			}//end if statement
+			else
+			{
+				mon_info = vmalloc(sizeof(mon_info));
+				list_add_tail(&mon_info->monitor_flow, current->monitor_info_container);
+			}//end else statement
+			mon_info->syscall_num = regs->rax;
+			mon_info->pid = current->pid;
+			mon_info->tgid = current->tgid;
+			do_gettimeofday(tv);
+			mon_info->timestamp = tv->tv_usec;
+			
+			args = vmalloc(sizeof(args));
+			mon_info->arg_info_container = args;
+
+			args->arg1 = (uintptr_t)regs->rdi;
+			args->arg2 = (char*)regs->rdi;
+			args->arg3 = (int)regs->rsi;	
             	break;
         	default:
             		ret = -1;
