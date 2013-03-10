@@ -132,11 +132,8 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		unregister_kprobe(&probe);
 		list_for_each_safe(temp_monitor_info, struct monitor_info, current->monitor_container->monitor_info_container){
 			traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
-			list_for_each_safe(temp_arg_info, struct arg_info, traverse_monitor){
-				traverse_arg = list_entry(temp_arg_info, struct arg_info, arg_flow);
-				list_del(temp_arg_info);
-				vfree(traverse_arg);
-			}
+			traverse_arg = traverse_monitor->arg_info_container;
+			vfree(traverse_arg);
 			list_del(temp_monitor_info);
 			vfree(traverse_monitor);
 		}
