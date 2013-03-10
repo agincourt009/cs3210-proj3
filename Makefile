@@ -5,6 +5,7 @@ obj-m += sysmon_log.o
 
 KVERSION = $(shell uname -r)
 
+#all: sysmon.o sysmon_uid.o sysmon_toggle.o
 all: sysmon.o sysmon_uid.o sysmon_toggle.o sysmon_log.o
 
 clean:
