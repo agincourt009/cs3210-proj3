@@ -18,7 +18,40 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 
 static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
-	
+	int pid;
+	int tgid;
+	long timestamp;
+	unsigned int sysnum;
+	uintptr_t arg1;
+	char* arg2;
+	int arg3;
+	struct arg_info *args;
+
+	list_for_each_safe(temp_monitor_info, struct monitor_info, current->monitor_container->monitor_info_container)
+	{
+		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
+		
+		sysnum = traverse_monitor->syscall_num;
+		pid = traverse_monitor->pid;
+		tgid = traverse_monitor->tgid;
+		timestamp = traverse_monitor->timestamp;
+		args = traverse_monitor->arg_info_container;
+
+		arg1 = args->arg1;
+		arg2 = args->arg2;
+		arg3 = args->arg3;
+		
+		sprintf("%lu %d %d args 0x%lu '%s' %d\n",
+                    	sysnum, pid, tgid,
+                    	arg1, arg2, arg3);	
+
+		traverse_arg = list_entry(temp_arg_info, struct arg_info, arg_flow);
+		list_del(temp_arg_info);
+		vfree(traverse_arg);
+
+		list_del(temp_monitor_info);
+		vfree(traverse_monitor);
+	}
 }//end sysmon_log_read_proc function
 
 static int __init sysmon_log_module_init(void){

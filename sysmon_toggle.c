@@ -31,11 +31,6 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	}
 	switch (regs->rax) {
         	case __NR_mkdir:
-        		printk(KERN_INFO MODULE_NAME
-                    	/* sycall pid tid args.. */
-                    	"%lu %d %d args 0x%lu '%s' %d\n",
-                    	regs->rax, current->pid, current->tgid,
-                    	(uintptr_t)regs->rdi, (char*)regs->rdi, (int)regs->rsi);
 			if(!(list_empty(current->monitor_info_container)==0))
 			{
 				mon_info = vmalloc(sizeof(mon_info));
