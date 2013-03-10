@@ -113,13 +113,13 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	if(input == 1)
 	{
 		probe.symbol_name = "sys_mkdir";
-    	probe.pre_handler = sysmon_intercept_before;
-    	probe.post_handler = sysmon_intercept_after;
+    		probe.pre_handler = sysmon_intercept_before;
+    		probe.post_handler = sysmon_intercept_after;
 		if (register_kprobe(&probe)) 
 		{
-     		printk(KERN_ERR MODULE_NAME "register_kprobe failed\n");
-       		return -EFAULT;
-    	}//end if statement	
+     			printk(KERN_ERR MODULE_NAME "register_kprobe failed\n");
+       			return -EFAULT;
+    		}//end if statement	
 		
 		monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
@@ -133,7 +133,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
 	
 	}//end if statement
-
 	else if(input == 0){
 		unregister_kprobe(&probe);
 		list_for_each_safe(temp_monitor_info, struct monitor_info, current->monitor_container->monitor_info_container){
