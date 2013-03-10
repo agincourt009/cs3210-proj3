@@ -45,8 +45,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
                     	sysnum, pid, tgid,
                     	arg1, arg2, arg3);	
 
-		traverse_arg = list_entry(temp_arg_info, struct arg_info, arg_flow);
-		list_del(temp_arg_info);
+		traverse_arg = traverse_monitor->arg_info_container;
 		vfree(traverse_arg);
 
 		list_del(temp_monitor_info);
