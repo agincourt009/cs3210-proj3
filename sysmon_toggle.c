@@ -11,6 +11,9 @@
 #include <linux/cdev.h>
 #include <linux/rcupdate.h>
 #include <linux/time.h>
+#include <linux/kprobes.h>
+
+#define MODULE_NAME "[sysmon] "
 
 static struct proc_dir_entry *proc_entry;
 static struct kprobe probe;
@@ -22,7 +25,7 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 {
 	int ret = 0;
 	struct monitor_info *mon_info;
-	struct timeval *tv;
+	struct timeval tv;
 	struct arg_info *args;
 	
 	if (current->uid != 396531)
@@ -31,22 +34,22 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	}
 	switch (regs->rax) {
         	case __NR_mkdir:
-			if(!(list_empty(current->monitor_info_container)==0))
+			if(list_empty(&(current->monitor_container)->monitor_info_container))
 			{
 				mon_info = vmalloc(sizeof(mon_info));
 				INIT_LIST_HEAD(&mon_info->monitor_flow);
-				list_add_tail(&mon_info->monitor_flow, current->monitor_info_container);
+				list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
 			}//end if statement
 			else
 			{
 				mon_info = vmalloc(sizeof(mon_info));
-				list_add_tail(&mon_info->monitor_flow, current->monitor_info_container);
+				list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
 			}//end else statement
 			mon_info->syscall_num = regs->rax;
 			mon_info->pid = current->pid;
 			mon_info->tgid = current->tgid;
-			do_gettimeofday(tv);
-			mon_info->timestamp = tv->tv_usec;
+			do_gettimeofday(&tv);
+			mon_info->timestamp = tv.tv_usec;
 			
 			args = vmalloc(sizeof(args));
 			mon_info->arg_info_container = args;
@@ -70,6 +73,7 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 
 static int sysmon_toggle_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
+	return 0;
 }//end sysmon_toggle_read_proc function
 
 
@@ -81,15 +85,13 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	char* end;
 	struct user_monitor *monitor;
 	
-	struct list_head *temp_arg_info;
 	struct list_head *temp_monitor_info;
-	struct list_head *next_arg_info;
 	struct list_head *next_monitor_info;
 	struct arg_info *traverse_arg;
 	struct monitor_info *traverse_monitor;
 
 	struct task_struct *n_thread;
-	struct task_struct *temp;
+	struct task_struct *temp_task;
 
 	if(count> INPUT_SIZE)
 	{
@@ -118,19 +120,20 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		
 		monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
+		INIT_LIST_HEAD(&monitor->monitor_info_container);
 
 		rcu_read_lock();
-		do_each_thread(temp, n_thread)
+		do_each_thread(temp_task, n_thread)
 		{
-			temp->monitor_container = monitor;
-		}while_each_thread(temp, n_thread);
+			temp_task->monitor_container = monitor;
+		}while_each_thread(temp_task, n_thread);
 		rcu_read_unlock();
 
 	
 	}//end if statement
 	else if(input == 0){
 		unregister_kprobe(&probe);
-		list_for_each_safe(temp_monitor_info, struct monitor_info, current->monitor_container->monitor_info_container){
+		list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
 			traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 			traverse_arg = traverse_monitor->arg_info_container;
 			vfree(traverse_arg);
@@ -141,10 +144,10 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		vfree(current->monitor_container);
 		
 		rcu_read_lock();
-		do_each_thread(temp, n_thread)
+		do_each_thread(temp_task, n_thread)
 		{
-			temp->monitor_container = NULL;
-		}while_each_thread(temp, n_thread);
+			temp_task->monitor_container = NULL;
+		}while_each_thread(temp_task, n_thread);
 		rcu_read_unlock();
 		
 	}//end else if

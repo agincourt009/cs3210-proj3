@@ -21,13 +21,20 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	int pid;
 	int tgid;
 	long timestamp;
-	unsigned int sysnum;
+	long unsigned int sysnum;
 	uintptr_t arg1;
 	char* arg2;
 	int arg3;
 	struct arg_info *args;
 
-	list_for_each_safe(temp_monitor_info, struct monitor_info, current->monitor_container->monitor_info_container)
+	struct arg_info *traverse_arg;
+	struct monitor_info *traverse_monitor;
+	struct list_head *temp_monitor_info;
+	struct list_head *next_monitor_info;
+
+	struct user_monitor *container = current->monitor_container;
+
+	list_for_each_safe(temp_monitor_info, next_monitor_info, &container->monitor_info_container)
 	{
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 		
@@ -41,7 +48,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		arg2 = args->arg2;
 		arg3 = args->arg3;
 		
-		sprintf("%lu %d %d args 0x%lu '%s' %d\n",
+		sprintf(page, "%lu %d %d args 0x%lu '%s' %d\n",
                     	sysnum, pid, tgid,
                     	arg1, arg2, arg3);	
 
@@ -50,7 +57,8 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 
 		list_del(temp_monitor_info);
 		vfree(traverse_monitor);
-	}
+	}//end list_for_each_safe loop
+	return count;
 }//end sysmon_log_read_proc function
 
 static int __init sysmon_log_module_init(void){
@@ -65,7 +73,6 @@ static int __init sysmon_log_module_init(void){
 	{
 		proc_entry->owner = THIS_MODULE;
 		proc_entry->read_proc = sysmon_log_read_proc;
-		proc_entry->write_proc = sysmon_log_write_proc;
 		printk(KERN_INFO "===============sysmon_log_module_init called. Module now loaded.\n");
 	}
 	return rv;
