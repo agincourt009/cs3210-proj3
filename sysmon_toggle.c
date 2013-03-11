@@ -12,7 +12,9 @@
 #include <linux/rcupdate.h>
 #include <linux/time.h>
 #include <linux/kprobes.h>
+//#include <linux/kallsyms.h>
 
+MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
 static struct proc_dir_entry *proc_entry;
@@ -112,6 +114,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		probe.symbol_name = "sys_mkdir";
     		probe.pre_handler = sysmon_intercept_before;
     		probe.post_handler = sysmon_intercept_after;
+//		probe.addr = (kprobe_opcode_t*)kallsyms_lookup_name("do_mkdir");
 		if (register_kprobe(&probe)) 
 		{
      			printk(KERN_ERR MODULE_NAME "register_kprobe failed\n");
@@ -163,25 +166,25 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
 static int __init sysmon_toggle_module_init(void){
 	int rv = 0;
-	proc_entry = create_proc_entry("sysmon_toggle", 0600, NULL);
+	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
 	{
 		rv = -ENOMEM;
-		printk(KERN_INFO "===============sysmon_toggle: Couldn't create proc entry\n");
+		printk(KERN_INFO "=====sysmon_toggle: Couldn't create proc entry\n");
 	}
 	else
 	{
 		proc_entry->owner = THIS_MODULE;
 		proc_entry->read_proc = sysmon_toggle_read_proc;
 		proc_entry->write_proc = sysmon_toggle_write_proc;
-		printk(KERN_INFO "===============sysmon_toggle_module_init called. Module now loaded.\n");
+		printk(KERN_INFO "=====sysmon_toggle_module_init called. Module now loaded.\n");
 	}
 	return rv;
 }
 
 static void __exit sysmon_toggle_module_cleanup(void){
 	remove_proc_entry("sysmon_toggle", proc_entry);
-	printk(KERN_INFO "===============sysmon_toggle_module_cleanup called. Module unloaded\n");
+	printk(KERN_INFO "=====sysmon_toggle_module_cleanup called. Module unloaded\n");
 }
 
 module_init(sysmon_toggle_module_init);

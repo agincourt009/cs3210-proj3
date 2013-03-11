@@ -5,8 +5,7 @@ obj-m += sysmon_log.o
 
 KVERSION = $(shell uname -r)
 
-#all: sysmon.o sysmon_uid.o sysmon_toggle.o
-all: sysmon.o sysmon_uid.o sysmon_toggle.o sysmon_log.o
+all: sysmon.o sysmon_uid.o sysmon_toggle.o sysmon_log.o systest
 
 clean:
 	make -C /lib/modules/$(KVERSION)/build M=$(PWD) clean
@@ -22,3 +21,6 @@ sysmon_toggle.o: sysmon_toggle.c
 
 sysmon_log.o: sysmon_log.c
 	make -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
+
+systest: systest.c
+	gcc -o systest systest.c

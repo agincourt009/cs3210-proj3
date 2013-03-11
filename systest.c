@@ -6,32 +6,48 @@
 #define FILE_PATH_LOG "/proc/sysmon_log"
 
 
-main()
+int main()
 {
 	FILE *file;
 	char dirpath[80] = "/nethome/sliang32/cs3210-proj3/test";
-	char *mkcmd[80];
+	char mkcmd[80];
 	char *ret[1000];	
 		
-	file = fopen(FILE_PATH_UID, "w");
-	fprintf(file, "396531", "396531");
-	fclose file;
 
 	file = fopen(FILE_PATH_TOGGLE, "w");
-	fprintf(file, "1", "1");
-	fclose file;
+	if(file != NULL){
+		fprintf(file, "1", "1");
+		fclose(file);
+	}else{
+		printf("sysmon_toggle not open\n");
+		return 1;
+	}
+	
+	file = fopen(FILE_PATH_UID, "w");
+	if(file != NULL){
+		fprintf(file, "396531", "396531");
+		fclose(file);
+	}else{
+		printf("sysmon_uid not open\n");
+		return 1;
+	}
 	
 	sprintf(mkcmd, "mkdir %s", dirpath);
 	system(mkcmd);
 
 	file = fopen(FILE_PATH_LOG, "r");
-	while(!feof(file))
-	{
-       		fscanf(file,"%s",ret);
-		printf("%s ", ret);
-	}//end while loop
-	printf("\n");
-	fclose(file);
+	if(file != NULL){
+		while(!feof(file))
+		{
+       			fscanf(file,"%s",ret);
+			printf("%s ", ret);
+		}//end while loop
+		printf("\n");
+		fclose(file);
+	}else{
+		printf("sysmon_log not open\n");
+		return 1;
+	}
 
-	
+	return 0;
 }//end main function

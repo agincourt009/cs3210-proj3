@@ -58,7 +58,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 
 static int __init sysmon_uid_module_init(void){
 	int rv = 0;
-	proc_entry = create_proc_entry("sysmon_uid", 0600, NULL);
+	proc_entry = create_proc_entry("sysmon_uid", 0766, NULL);
 	if(proc_entry == NULL)
 	{
 		rv = -ENOMEM;
