@@ -150,6 +150,8 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	
 	}//end if statement
 	else if(input == 0){
+		
+		printk(KERN_INFO "Unregistering kprobe\n");
 		unregister_kprobe(probe);
 		vfree(probe);
 		list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
