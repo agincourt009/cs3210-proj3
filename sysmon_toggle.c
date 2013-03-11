@@ -120,25 +120,27 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 			vfree(probe);
 			probe = vmalloc(sizeof(*probe));
 		}
-		probe = vmalloc(sizeof(*probe));
 		memset(probe, 0, sizeof(*probe));
+     		printk(KERN_INFO "=====clear memory of kprobe\n");
 
 		probe->symbol_name = "sys_mkdir";
     		probe->pre_handler = sysmon_intercept_before;
     		probe->post_handler = sysmon_intercept_after;
+     		printk(KERN_INFO "=====set handler to kprobe\n");
 		
-		//probe.symbol_name = "sys_mkdir";
-    		//probe.pre_handler = sysmon_intercept_before;
-    		//probe.post_handler = sysmon_intercept_after;
 		if (register_kprobe(probe)) 
 		{
      			printk(KERN_ERR MODULE_NAME "=====register_kprobe failed\n");
        			return -EFAULT;
     		}//end if statement	
 		
+     		printk(KERN_INFO "=====register kprobe\n");
+
 		monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
-		INIT_LIST_HEAD(&monitor->monitor_info_container);
+     		printk(KERN_INFO "=====allocate memory for current->monitor_container\n");
+		INIT_LIST_HEAD(&(monitor->monitor_info_container));
+     		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");
 
 		rcu_read_lock();
 		do_each_thread(temp_task, n_thread)

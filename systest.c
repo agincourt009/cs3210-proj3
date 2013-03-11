@@ -23,6 +23,7 @@ int main()
 		return 1;
 	}
 	
+	printf("Kprobe toggled ON\n");
 	file = fopen(FILE_PATH_UID, "w");
 	if(file != NULL){
 		fprintf(file, "396531", "396531");
@@ -31,6 +32,7 @@ int main()
 		printf("sysmon_uid not open\n");
 		return 1;
 	}
+	printf("Set UID\n");
 	
 	sprintf(mkcmd, "mkdir %s", dirpath);
 	system(mkcmd);
