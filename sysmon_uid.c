@@ -12,6 +12,7 @@
 #include <linux/cdev.h>
 #include <linux/rcupdate.h>
 
+MODULE_LICENSE("GPL");
 static struct proc_dir_entry *proc_entry;
 
 static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
@@ -20,7 +21,6 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int length;  
-	//printk(KERN_INFO "===============entering sysmon_uid_read_proc\n");
 
 	length = sprintf(page, "%d", current->monitor_container->monitor_uid);
 
@@ -40,7 +40,6 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 		count = UID_SIZE;
 	}//end if statement
 	
-	//printk(KERN_INFO "===============before copy from user\n");
 	if(copy_from_user(temp, buf, count))
    	{
    		return -EFAULT;
@@ -48,9 +47,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 
 	temp[count]=0;	
 	
-	//printk(KERN_INFO "===============before convert the seed to long long: %s\n", temp);
 	mon_uid = (int)simple_strtol(temp, &end, 10);
-	//printk(KERN_INFO "===============copy the seed: %lld\n", seed);
 	current->monitor_container->monitor_uid = mon_uid;
 
 	return count;

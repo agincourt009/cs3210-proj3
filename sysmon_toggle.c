@@ -18,7 +18,8 @@ MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
 static struct proc_dir_entry *proc_entry;
-static struct kprobe probe;
+//static struct kprobe probe;
+static struct kprobe *probe;
 
 static int sysmon_toggle_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned long count, void *data);
@@ -111,13 +112,27 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	
 	if(input == 1)
 	{
-		probe.symbol_name = "sys_mkdir";
-    		probe.pre_handler = sysmon_intercept_before;
-    		probe.post_handler = sysmon_intercept_after;
-//		probe.addr = (kprobe_opcode_t*)kallsyms_lookup_name("do_mkdir");
-		if (register_kprobe(&probe)) 
+     		printk(KERN_INFO "=====toggle kprobe on\n");
+		if(probe == NULL){
+			probe = vmalloc(sizeof(*probe));
+     			printk(KERN_INFO "=====probe is empty, allocate memory for probe\n");
+		}else{
+			vfree(probe);
+			probe = vmalloc(sizeof(*probe));
+		}
+		probe = vmalloc(sizeof(*probe));
+		memset(probe, 0, sizeof(*probe));
+
+		probe->symbol_name = "sys_mkdir";
+    		probe->pre_handler = sysmon_intercept_before;
+    		probe->post_handler = sysmon_intercept_after;
+		
+		//probe.symbol_name = "sys_mkdir";
+    		//probe.pre_handler = sysmon_intercept_before;
+    		//probe.post_handler = sysmon_intercept_after;
+		if (register_kprobe(probe)) 
 		{
-     			printk(KERN_ERR MODULE_NAME "register_kprobe failed\n");
+     			printk(KERN_ERR MODULE_NAME "=====register_kprobe failed\n");
        			return -EFAULT;
     		}//end if statement	
 		
@@ -135,7 +150,8 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	
 	}//end if statement
 	else if(input == 0){
-		unregister_kprobe(&probe);
+		unregister_kprobe(probe);
+		vfree(probe);
 		list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
 			traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 			traverse_arg = traverse_monitor->arg_info_container;
