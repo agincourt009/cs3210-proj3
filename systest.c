@@ -12,6 +12,17 @@ int main()
 	char dirpath[80] = "/nethome/sliang32/cs3210-proj3/test";
 	char mkcmd[80];
 	char *ret[1000];	
+	
+	/*file = fopen(FILE_PATH_TOGGLE, "w");
+	if(file != NULL){
+		fprintf(file, "0", "0");
+		fclose(file);
+	}else{
+		printf("sysmon_toggle not open\n");
+		return 1;
+	}
+	
+	printf("Kprobe toggled OFF\n");*/
 		
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){

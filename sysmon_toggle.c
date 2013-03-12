@@ -66,8 +66,11 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
      			printk(KERN_INFO "=====allocate arg_info structure\n");
 
 			args->arg1 = regs->rdi;
+     			printk(KERN_INFO "=====add arg1: %ld\n", args->arg1);
 			args->arg2 = regs->rdi;
+     			printk(KERN_INFO "=====add arg2: %ld\n", args->arg2);
 			args->arg3 = regs->rsi;	
+     			printk(KERN_INFO "=====add arg3: %ld\n", args->arg3);
      			printk(KERN_INFO "=====add argument to arg_info\n");
             	break;
         	default:
