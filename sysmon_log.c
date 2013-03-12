@@ -38,15 +38,29 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	{
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 		
-		sysnum = traverse_monitor->syscall_num;
-		pid = traverse_monitor->pid;
-		tgid = traverse_monitor->tgid;
-		timestamp = traverse_monitor->timestamp;
-		args = traverse_monitor->arg_info_container;
+     		printk(KERN_INFO "=====traverse monitor_info list\n");
 
-		arg1 = args->arg1;
-		arg2 = args->arg2;
-		arg3 = args->arg3;
+		sysnum = traverse_monitor->syscall_num;
+     		printk(KERN_INFO "=====monitor_info: sysmon: %lu\n", sysnum);
+		pid = traverse_monitor->pid;
+     		printk(KERN_INFO "=====monitor_info: pid: %d\n", pid);
+		tgid = traverse_monitor->tgid;
+     		printk(KERN_INFO "=====monitor_info: tgid: %d\n", tgid);
+		timestamp = traverse_monitor->timestamp;
+     		printk(KERN_INFO "=====monitor_info: timestamp: %lu\n", timestamp);
+		args = traverse_monitor->arg_info_container;
+     		
+		printk(KERN_INFO "=====monitor_info: get args pointer\n");
+
+		arg1 = (uintptr_t)args->arg1;
+		printk(KERN_INFO "=====monitor_info: args1: 0x%lu\n", arg1);
+		arg2 = vmalloc(100 * sizeof(*arg2));
+		arg2 = (char*)args->arg2;
+		//sprintf(arg2, "%lu", args->arg2);
+		printk(KERN_INFO "=====monitor_info: args2: '%s'\n", arg2);
+		arg3 = (int)args->arg3;
+     		
+		printk(KERN_INFO "=====monitor_info: args3: %d\n", arg3);
 		
 		sprintf(page, "%lu %d %d args 0x%lu '%s' %d\n",
                     	sysnum, pid, tgid,

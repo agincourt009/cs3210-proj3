@@ -13,7 +13,6 @@ int main()
 	char mkcmd[80];
 	char *ret[1000];	
 		
-
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
 		fprintf(file, "1", "1");
@@ -50,6 +49,17 @@ int main()
 		printf("sysmon_log not open\n");
 		return 1;
 	}
+	
+	file = fopen(FILE_PATH_TOGGLE, "w");
+	if(file != NULL){
+		fprintf(file, "0", "0");
+		fclose(file);
+	}else{
+		printf("sysmon_toggle not open\n");
+		return 1;
+	}
+	
+	printf("Kprobe toggled OFF\n");
 
 	return 0;
 }//end main function

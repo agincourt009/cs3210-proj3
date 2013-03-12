@@ -12,7 +12,6 @@
 #include <linux/rcupdate.h>
 #include <linux/time.h>
 #include <linux/kprobes.h>
-//#include <linux/kallsyms.h>
 
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
@@ -33,36 +32,46 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	
 	if (current->uid != 396531)
 	{
+     		printk(KERN_INFO "=====not sliang32's UID\n");
         	return 0;
 	}
 	switch (regs->rax) {
         	case __NR_mkdir:
+     			printk(KERN_INFO "=====inside mkdir\n");
 			if(list_empty(&(current->monitor_container)->monitor_info_container))
 			{
+     				printk(KERN_INFO "=====list monitor_info_container is empty\n");
 				mon_info = vmalloc(sizeof(mon_info));
 				INIT_LIST_HEAD(&mon_info->monitor_flow);
 				list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
+     				printk(KERN_INFO "=====add new monitor_info\n");
 			}//end if statement
 			else
 			{
 				mon_info = vmalloc(sizeof(mon_info));
 				list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
+     				printk(KERN_INFO "=====add new monitor_info\n");
 			}//end else statement
 			mon_info->syscall_num = regs->rax;
 			mon_info->pid = current->pid;
 			mon_info->tgid = current->tgid;
+     			printk(KERN_INFO "=====stored syscall number, pid, tgid\n");
+
 			do_gettimeofday(&tv);
 			mon_info->timestamp = tv.tv_usec;
+     			printk(KERN_INFO "=====gettimeofday and get timestamp\n");
 			
 			args = vmalloc(sizeof(args));
 			mon_info->arg_info_container = args;
+     			printk(KERN_INFO "=====allocate arg_info structure\n");
 
-			args->arg1 = (uintptr_t)regs->rdi;
-			args->arg2 = (char*)regs->rdi;
-			args->arg3 = (int)regs->rsi;	
+			args->arg1 = regs->rdi;
+			args->arg2 = regs->rdi;
+			args->arg3 = regs->rsi;	
+     			printk(KERN_INFO "=====add argument to arg_info\n");
             	break;
         	default:
-            		ret = -1;
+            		ret = 0;
             	break;
 	}
 	return ret;
