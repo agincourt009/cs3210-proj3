@@ -24,10 +24,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	int tgid;
 	long timestamp;
 	long unsigned int sysnum;
-	uintptr_t arg1;
-	//char* arg2;
-	long unsigned int arg2;
-	int arg3;
+	unsigned long arg0, arg1, arg2, arg3, arg4, arg5;
 	struct arg_info *args;
 
 	struct arg_info *traverse_arg;
@@ -58,23 +55,91 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		args = traverse_monitor->arg_info_container;
     		printk(KERN_INFO "=====monitor_info: get args pointer\n");
 
-		arg1 = (uintptr_t)args->arg1;
-		printk(KERN_INFO "=====monitor_info: args1: 0x%lu\n", arg1);
-		//arg2 = vmalloc(100 * sizeof(*arg2));
-		arg2 = args->arg2;
-		//sprintf(arg2, "%lu", args->arg2);
-		printk(KERN_INFO "=====monitor_info: args2: %lu\n", args->arg2);
-		arg3 = (int)args->arg3;
+		switch (regs->rax)
+		{		
+			case __NR_brk:
+			case __NR_chdir:
+			case __NR_close:
+			case __NR_dup:
+			case __NR_exit_group:
+			case __NR_fork:
+			case __NR_pipe:
+			case __NR_rmdir:
+				arg0 = args->arg0;
+				sprintf(page, "%lu %d %d args %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0);
+				break;
+			case __NR_access:
+			case __NR_chmod:
+			case __NR_dup2:
+			case __NR_mkdir:
+			case __NR_munmap:
+			case __NR_stat:
+			case __NR_fstat:
+			case __NR_lstat:
+				arg0 = args->arg0;				
+				arg1 = args->arg1;
+				sprintf(page, "%lu %d %d args %lu %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0, arg1);
+				break;
+			case __NR_fcntl:
+			case __NR_getdents:
+			case __NR_ioctl:
+			case __NR_lseek:
+			case __NR_open:
+			case __NR_read:
+			case __NR_write:
+				arg0 = args->arg0;				
+				arg1 = args->arg1;
+				arg2 = args->arg2;
+				sprintf(page, "%lu %d %d args %lu %lu %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0, arg1, arg2);
+				break;
+			case __NR_execve:
+			case __NR_wait4:
+				arg0 = args->arg0;				
+				arg1 = args->arg1;
+				arg2 = args->arg2;
+				arg3 = args->arg3;
+				sprintf(page, "%lu %d %d args %lu %lu %lu %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0, arg1, arg2, arg3);
+				break;
+			case __NR_clone:
+			case __NR_select:
+				arg0 = args->arg0;				
+				arg1 = args->arg1;
+				arg2 = args->arg2;
+				arg3 = args->arg3;
+				arg4 = args->arg4;
+				sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0, arg1, arg2, arg3, arg4);
+				break;
+			case __NR_mmap:
+				arg0 = args->arg0;				
+				arg1 = args->arg1;
+				arg2 = args->arg2;
+				arg3 = args->arg3;
+				arg4 = args->arg4;
+				arg5 = args->arg5;
+				sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
+                    		sysnum, pid, tgid,
+                    		arg0, arg1, arg2, arg3, arg4,arg5);
+				break;
+			case __NR_getpid:
+			case __NR_gettid:
+				sprintf(page, "%lu %d %d args: This syscall does not have any args.\n",
+                    		sysnum, pid, tgid);
+				break;
+			default:
+				break;
+		}//end switch statement
      		
 		printk(KERN_INFO "=====monitor_info: args3: %d\n", arg3);
-		
-		/*sprintf(page, "%lu %d %d args 0x%lu '%s' %d\n",
-                    	sysnum, pid, tgid,
-                    	arg1, (char*)args->arg2, arg3);	*/
-
-		sprintf(page, "%lu %d %d args 0x%lu %lu %d\n",
-                    	sysnum, pid, tgid,
-                    	arg1, arg2, arg3);	
 
 		traverse_arg = traverse_monitor->arg_info_container;
 		vfree(traverse_arg);
