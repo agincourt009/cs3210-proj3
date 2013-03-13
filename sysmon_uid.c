@@ -48,6 +48,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 	temp[count]=0;	
 	
 	mon_uid = (int)simple_strtol(temp, &end, 10);
+	printk(KERN_INFO "the input UID is mon_uid: %d\n", mon_uid);
 	current->monitor_container->monitor_uid = mon_uid;
 
 	return count;

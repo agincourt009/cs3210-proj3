@@ -1,6 +1,5 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/proc_fs.h>
 #include <linux/vmalloc.h>
@@ -11,6 +10,7 @@
 #include <asm/current.h>
 #include <linux/cdev.h>
 #include <linux/rcupdate.h>
+#include <linux/kprobes.h>
 
 MODULE_LICENSE("GPL");
 
@@ -55,7 +55,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		args = traverse_monitor->arg_info_container;
     		printk(KERN_INFO "=====monitor_info: get args pointer\n");
 
-		switch (regs->rax)
+		switch (sysnum)
 		{		
 			case __NR_brk:
 			case __NR_chdir:
@@ -139,7 +139,6 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				break;
 		}//end switch statement
      		
-		printk(KERN_INFO "=====monitor_info: args3: %d\n", arg3);
 
 		traverse_arg = traverse_monitor->arg_info_container;
 		vfree(traverse_arg);

@@ -18,7 +18,7 @@ MODULE_LICENSE("GPL");
 
 static struct proc_dir_entry *proc_entry;
 
-static struct kprobe *probe_access;	//1. sys_access,	21, 	__NR_access, 	2 args
+/*static struct kprobe *probe_access;	//1. sys_access,	21, 	__NR_access, 	2 args
 static struct kprobe *probe_brk;	//2. sys_brk, 		12, 	__NR_brk, 	1 arg
 static struct kprobe *probe_chdir;	//3. sys_chdir,		80,	__NR_chdir,	1 arg
 static struct kprobe *probe_chmod;	//4. sys_chmod,		90,	__NR_chmod,	2 args
@@ -35,6 +35,7 @@ static struct kprobe *probe_getpid;	//14. sys_getpid,	39,	__NR_getpid,	0 arg
 static struct kprobe *probe_gettid;	//15. sys_gettid,	186,	__NR_gettid,	0 arg
 static struct kprobe *probe_ioctl;	//16. sys_ioctl,	16,	__NR_ioctl,	3 args
 static struct kprobe *probe_lseek;	//17. sys_lseek,	8,	__NR_lseek,	3 args
+*/
 static struct kprobe *probe_mkdir;	//18. sys_mkdir,	83,	__NR_mkdir,	2 args
 static struct kprobe *probe_mmap;	//19. sys_mmap,		9,	__NR_mmap,	6 args
 static struct kprobe *probe_munmap;	//20. sys_munmap,	11,	__NR_munmap,	2 args
@@ -45,9 +46,10 @@ static struct kprobe *probe_rmdir;	//24. sys_rmdir,	84,	__NR_rmdir,	1 arg
 static struct kprobe *probe_select;	//25. sys_select,	23,	__NR_select,	5 args
 static struct kprobe *probe_stat;	//26. sys_newstat,	4,	__NR_stat,	2 args	
 static struct kprobe *probe_fstat;	//27. sys_newfstat,	5,	__NR_fstat,	2 args
-static struct kprobe *probe_lstat;	//28. sys_newlstat,	6,	__NR_lstat,	2 args
+/*static struct kprobe *probe_lstat;	//28. sys_newlstat,	6,	__NR_lstat,	2 args
 static struct kprobe *probe_wait4;	//29. sys_wait4,	61,	__NR_wait4,	4 args
 static struct kprobe *probe_write;	//30. sys_write,	1,	__NR_write,	3 args	
+*/
 
 static int sysmon_toggle_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned long count, void *data);
@@ -59,7 +61,8 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct timeval tv;
 	struct arg_info *args;
 	
-	if (current->uid != (current->monitor_container)->monitor_uid)
+	//if (current->uid != (current->monitor_container)->monitor_uid)
+	if (current->uid != 396531)
 	{
 		if(current->monitor_container->monitor_uid == 0){
 			printk(KERN_INFO "=====not set monitor_uid yet\n");
@@ -277,9 +280,9 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	
 	if(input == 1)
 	{
-     		printk(KERN_INFO "=====toggle kprobe on\n");
+    		printk(KERN_INFO "=====toggle kprobe on\n");
 		// probe_access
-		if(probe_access == NULL){
+/*		if(probe_access == NULL){
 			probe_access = vmalloc(sizeof(*probe_access));
 		}else{
 			vfree(probe_access);
@@ -423,6 +426,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		}
 
 		// probe_execve
+		
 		if(probe_execve == NULL){
 			probe_execve = vmalloc(sizeof(*probe_execve));
 		}else{
@@ -477,6 +481,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		}
 
 		// probe_fork
+		
 		if(probe_fork == NULL){
 			probe_fork = vmalloc(sizeof(*probe_fork));
 		}else{
@@ -583,7 +588,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		{
        			return -EFAULT;
 		}
-		
+		*/
 		// probe_mkdir
 		if(probe_mkdir == NULL){
 			probe_mkdir = vmalloc(sizeof(*probe_mkdir));
@@ -764,7 +769,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
        			return -EFAULT;
 		}
 
-		// probe_lstat
+/*		// probe_lstat
 		if(probe_lstat == NULL){
 			probe_lstat = vmalloc(sizeof(*probe_lstat));
 		}else{
@@ -816,9 +821,10 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		if (register_kprobe(probe_write)) 
 		{
        			return -EFAULT;
-		}
+		}*/
+		
 
-     	printk(KERN_INFO "=====register kprobe\n");
+     		printk(KERN_INFO "=====register kprobe\n");
 
 		monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
@@ -839,7 +845,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	else if(input == 0){
 		
 		printk(KERN_INFO "Unregistering kprobe\n");
-		unregister_kprobe(probe_access);	
+		/*unregister_kprobe(probe_access);	
 		unregister_kprobe(probe_brk);	
 		unregister_kprobe(probe_chdir);	
 		unregister_kprobe(probe_chmod);	
@@ -856,6 +862,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		unregister_kprobe(probe_gettid);	
 		unregister_kprobe(probe_ioctl);	
 		unregister_kprobe(probe_lseek);	
+*/
 		unregister_kprobe(probe_mkdir);	
 		unregister_kprobe(probe_mmap);	
 		unregister_kprobe(probe_munmap);	
@@ -866,7 +873,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		unregister_kprobe(probe_select);	
 		unregister_kprobe(probe_stat);	
 		unregister_kprobe(probe_fstat);	
-		unregister_kprobe(probe_lstat);	
+/*		unregister_kprobe(probe_lstat);	
 		unregister_kprobe(probe_wait4);	
 		unregister_kprobe(probe_write);	
 
@@ -874,19 +881,20 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		vfree(probe_brk);	
 		vfree(probe_chdir);	
 		vfree(probe_chmod);	
-		vfree(probe_clone);	
+		//vfree(probe_clone);	
 		vfree(probe_close);	
 		vfree(probe_dup);	
 		vfree(probe_dup2);	
-		vfree(probe_execve);	
+		//vfree(probe_execve);	
 		vfree(probe_exit_group);	
 		vfree(probe_fcntl);	
-		vfree(probe_fork);	
+		//vfree(probe_fork);	
 		vfree(probe_getdents);	
 		vfree(probe_getpid);	
 		vfree(probe_gettid);	
 		vfree(probe_ioctl);	
 		vfree(probe_lseek);	
+*/
 		vfree(probe_mkdir);	
 		vfree(probe_mmap);	
 		vfree(probe_munmap);	
@@ -897,9 +905,10 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		vfree(probe_select);	
 		vfree(probe_stat);	
 		vfree(probe_fstat);	
-		vfree(probe_lstat);	
+/*		vfree(probe_lstat);	
 		vfree(probe_wait4);	
 		vfree(probe_write);	
+*/
 
 /*		list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
 			traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);

@@ -46,6 +46,19 @@ int main()
 	
 	sprintf(mkcmd, "mkdir %s", dirpath);
 	system(mkcmd);
+	sprintf(mkcmd, "rmdir %s", dirpath);
+	system(mkcmd);
+	
+	file = fopen(FILE_PATH_TOGGLE, "w");
+	if(file != NULL){
+		fprintf(file, "0", "0");
+		fclose(file);
+	}else{
+		printf("sysmon_toggle not open\n");
+		return 1;
+	}
+	
+	printf("Kprobe toggled OFF\n");
 
 	file = fopen(FILE_PATH_LOG, "r");
 	if(file != NULL){
@@ -61,16 +74,6 @@ int main()
 		return 1;
 	}
 	
-	file = fopen(FILE_PATH_TOGGLE, "w");
-	if(file != NULL){
-		fprintf(file, "0", "0");
-		fclose(file);
-	}else{
-		printf("sysmon_toggle not open\n");
-		return 1;
-	}
-	
-	printf("Kprobe toggled OFF\n");
 
 	return 0;
 }//end main function
