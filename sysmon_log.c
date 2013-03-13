@@ -25,6 +25,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	long timestamp;
 	long unsigned int sysnum;
 	unsigned long arg0, arg1, arg2, arg3, arg4, arg5;
+	bool first = 1;
 	struct arg_info *args;
 
 	struct arg_info *traverse_arg;
@@ -37,23 +38,16 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	list_for_each_safe(temp_monitor_info, next_monitor_info, &container->monitor_info_container)
 	{
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
-		
-     		printk(KERN_INFO "=====traverse monitor_info list\n");
 
 		sysnum = traverse_monitor->syscall_num;
-     		printk(KERN_INFO "=====monitor_info: sysmon: %lu\n", sysnum);
 		
 		pid = traverse_monitor->pid;
-     		printk(KERN_INFO "=====monitor_info: pid: %d\n", pid);
 		
 		tgid = traverse_monitor->tgid;
-     		printk(KERN_INFO "=====monitor_info: tgid: %d\n", tgid);
 		
 		timestamp = traverse_monitor->timestamp;
-     		printk(KERN_INFO "=====monitor_info: timestamp: %lu\n", timestamp);
 		
 		args = traverse_monitor->arg_info_container;
-    		printk(KERN_INFO "=====monitor_info: get args pointer\n");
 
 		switch (sysnum)
 		{		
@@ -66,9 +60,23 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 			case __NR_pipe:
 			case __NR_rmdir:
 				arg0 = args->arg0;
-				sprintf(page, "%lu %d %d args %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0);
+					first = 0;
+				
+					printk(KERN_INFO "%lu %d %d args %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0);
+				}//end else statement
 				break;
 			case __NR_access:
 			case __NR_chmod:
@@ -80,9 +88,23 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 			case __NR_lstat:
 				arg0 = args->arg0;				
 				arg1 = args->arg1;
-				sprintf(page, "%lu %d %d args %lu %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0, arg1);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1);
+					first = 0;
+					
+					printk(KERN_INFO "%lu %d %d args %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1);
+				}//end else
 				break;
 			case __NR_fcntl:
 			case __NR_getdents:
@@ -94,9 +116,23 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				arg0 = args->arg0;				
 				arg1 = args->arg1;
 				arg2 = args->arg2;
-				sprintf(page, "%lu %d %d args %lu %lu %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0, arg1, arg2);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2);
+					first = 0;
+	
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2);
+				}//end else
 				break;
 			case __NR_execve:
 			case __NR_wait4:
@@ -104,9 +140,23 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				arg1 = args->arg1;
 				arg2 = args->arg2;
 				arg3 = args->arg3;
-				sprintf(page, "%lu %d %d args %lu %lu %lu %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0, arg1, arg2, arg3);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3);
+					first = 0;
+
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3);
+				}//end else
 				break;
 			case __NR_clone:
 			case __NR_select:
@@ -115,9 +165,23 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				arg2 = args->arg2;
 				arg3 = args->arg3;
 				arg4 = args->arg4;
-				sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0, arg1, arg2, arg3, arg4);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4);
+					first = 0;
+
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4);
+				}//end else
 				break;
 			case __NR_mmap:
 				arg0 = args->arg0;				
@@ -126,14 +190,40 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				arg3 = args->arg3;
 				arg4 = args->arg4;
 				arg5 = args->arg5;
-				sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
-                    		sysnum, pid, tgid,
-                    		arg0, arg1, arg2, arg3, arg4,arg5);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4,arg5);
+					first = 0;
+
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4,arg5);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
+                    			sysnum, pid, tgid,
+                    			arg0, arg1, arg2, arg3, arg4,arg5);
+				}//end else
 				break;
 			case __NR_getpid:
 			case __NR_gettid:
-				sprintf(page, "%lu %d %d args: This syscall does not have any args.\n",
-                    		sysnum, pid, tgid);
+				if(first)
+				{
+					sprintf(page, "%lu %d %d args: This syscall does not have any args.\n",
+                    			sysnum, pid, tgid);
+					first = 0;
+
+					printk(KERN_INFO "%lu %d %d args: This syscall does not have any args.\n",
+                    			sysnum, pid, tgid);
+				}//end if statement
+				else
+				{
+					printk(KERN_INFO "%lu %d %d args: This syscall does not have any args.\n",
+                    			sysnum, pid, tgid);
+				}//end else
 				break;
 			default:
 				break;
