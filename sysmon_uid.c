@@ -32,12 +32,12 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 {
 	static const int UID_SIZE = sizeof(int);
 	int mon_uid;
-	char temp[sizeof(int)];
+	char temp[256];
 	char* end;
 
-	if(count> UID_SIZE)
+	if(count> 256)
 	{
-		count = UID_SIZE;
+		count = 256;
 	}//end if statement
 	
 	if(copy_from_user(temp, buf, count))
