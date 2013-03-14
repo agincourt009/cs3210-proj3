@@ -12,6 +12,7 @@
 #include <linux/rcupdate.h>
 #include <linux/time.h>
 #include <linux/kprobes.h>
+#include <linux/spinlock.h>
 
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
@@ -60,6 +61,7 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct monitor_info *mon_info;
 	struct timeval tv;
 	struct arg_info *args;
+	rwlock_t w_lock = RW_LOCK_UNLOCKED;
 	
 	//if (current->uid != (current->monitor_container)->monitor_uid)
 	if (current->uid != 396531)
@@ -72,6 +74,7 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
         	return 0;
 	}
 	
+	write_lock(&w_lock);
 	if(list_empty(&(current->monitor_container)->monitor_info_container))
 	{
      		printk(KERN_INFO "=====list monitor_info_container is empty\n");
@@ -238,6 +241,7 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
             		ret = 0;
             	break;
 	}
+	write_unlock(&w_lock);
 	return ret;
 }
  
