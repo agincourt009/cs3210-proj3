@@ -11,7 +11,7 @@ int main()
 	FILE *file;
 	char dirpath[80] = "/nethome/sliang32/cs3210-proj3/test";
 	char mkcmd[80];
-	char *ret[1000];	
+	char ret[1000];	
 	
 	/*file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
@@ -48,7 +48,7 @@ int main()
 	system(mkcmd);
 	sprintf(mkcmd, "rmdir %s", dirpath);
 	system(mkcmd);
-	
+
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
 		fprintf(file, "0", "0");

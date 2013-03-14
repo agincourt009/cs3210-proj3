@@ -16,7 +16,7 @@ MODULE_LICENSE("GPL");
 
 static struct proc_dir_entry *proc_entry;
 
-static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
+//static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 
 static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
@@ -70,6 +70,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu\n",
                     			sysnum, pid, tgid,
                     			arg0);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -98,6 +99,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu %lu\n",
                     			sysnum, pid, tgid,
                     			arg0, arg1);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -126,6 +128,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu %lu %lu\n",
                     			sysnum, pid, tgid,
                     			arg0, arg1, arg2);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -150,6 +153,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu\n",
                     			sysnum, pid, tgid,
                     			arg0, arg1, arg2, arg3);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -175,6 +179,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu\n",
                     			sysnum, pid, tgid,
                     			arg0, arg1, arg2, arg3, arg4);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -200,6 +205,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 					printk(KERN_INFO "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
                     			sysnum, pid, tgid,
                     			arg0, arg1, arg2, arg3, arg4,arg5);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -218,6 +224,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 
 					printk(KERN_INFO "%lu %d %d args: This syscall does not have any args.\n",
                     			sysnum, pid, tgid);
+					printk(KERN_INFO "this is the first element\n");
 				}//end if statement
 				else
 				{
@@ -236,6 +243,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		list_del(temp_monitor_info);
 		vfree(traverse_monitor);
 	}//end list_for_each_safe loop
+	*eof = 1;
 	return count;
 }//end sysmon_log_read_proc function
 
