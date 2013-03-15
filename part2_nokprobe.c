@@ -28,7 +28,7 @@ int main(void)
 		}
 		end = rdtsc();
 		total = end - start;
-		printf("%llu, ", total);
+		printf("%llu, \n", total);
 	}
 	printf("\n");
 	
@@ -40,7 +40,7 @@ int main(void)
 		}
 		end = rdtsc();
 		total = end - start;
-		printf("%llu, ", total);
+		printf("%llu, \n", total);
 	}
 	printf("\n");
 	
@@ -52,7 +52,7 @@ int main(void)
 		}
 		end = rdtsc();
 		total = end - start;
-		printf("%llu, ", total);
+		printf("%llu, \n", total);
 	}
 	printf("\n");
 	

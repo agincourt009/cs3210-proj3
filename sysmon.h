@@ -17,11 +17,5 @@ struct monitor_info {
 }; // end of monitor_info
 
 // Global variable
-int monitor_uid;
-bool kprobe_toggle;
-
-rwlock_t w_lock;
-struct list_head monitor_info_container;
-LIST_HEAD(monitor_info_container);
 
 #endif

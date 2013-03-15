@@ -14,6 +14,9 @@
 #include "sysmon.h"
 
 MODULE_LICENSE("GPL");
+
+extern int monitor_uid;
+
 static struct proc_dir_entry *proc_entry;
 
 static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned long count, void *data)
@@ -37,6 +40,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 	mon_uid = (int)simple_strtol(temp, &end, 10);
 	printk(KERN_INFO "the input UID is mon_uid: %d\n", mon_uid);
 	monitor_uid = mon_uid;
+	printk(KERN_INFO "now monitored UID is: %d\n", monitor_uid);
 
 	return count;
 }//end sysmon_uid_write_proc function

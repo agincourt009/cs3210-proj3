@@ -16,8 +16,10 @@
 
 MODULE_LICENSE("GPL");
 
+extern rwlock_t w_lock;
+extern struct list_head monitor_info_container;
+
 static struct proc_dir_entry *proc_entry;
-//extern rwlock_t w_lock;
 
 //static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 

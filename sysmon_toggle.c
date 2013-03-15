@@ -18,6 +18,19 @@
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
+int monitor_uid;
+EXPORT_SYMBOL(monitor_uid);
+
+bool kprobe_toggle;
+EXPORT_SYMBOL(kprobe_toggle);
+
+rwlock_t w_lock;
+EXPORT_SYMBOL(w_lock);
+
+struct list_head monitor_info_container;
+EXPORT_SYMBOL(monitor_info_container);
+LIST_HEAD(monitor_info_container);
+
 static struct proc_dir_entry *proc_entry;
 
 //rwlock_t w_lock;
@@ -691,7 +704,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
      		printk(KERN_INFO "=====register kprobe\n");
 		
-		monitor_uid = -1;
 
 		/*monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
@@ -790,6 +802,7 @@ static int __init sysmon_toggle_module_init(void){
 	int rv = 0;
 	w_lock = RW_LOCK_UNLOCKED;
 	kprobe_toggle = 0;
+	monitor_uid = -1;
 	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
 	{
