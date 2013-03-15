@@ -29,16 +29,12 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	long unsigned int sysnum;
 	unsigned long arg0, arg1, arg2, arg3, arg4, arg5;
 	bool first = 1;
-	struct arg_info *args;
 
-	struct arg_info *traverse_arg;
 	struct monitor_info *traverse_monitor;
 	struct list_head *temp_monitor_info;
 	struct list_head *next_monitor_info;
 
-	struct user_monitor *container = current->monitor_container;
-
-	list_for_each_safe(temp_monitor_info, next_monitor_info, &container->monitor_info_container)
+	list_for_each_safe(temp_monitor_info, next_monitor_info, monitor_info_container)
 	{
 		read_lock(&w_lock);		
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
@@ -50,8 +46,6 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		tgid = traverse_monitor->tgid;
 		
 		timestamp = traverse_monitor->timestamp;
-		
-		args = traverse_monitor->arg_info_container;
 
 		switch (sysnum)
 		{		
@@ -63,7 +57,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 			case __NR_fork:
 			case __NR_pipe:
 			case __NR_rmdir:
-				arg0 = args->arg0;
+				arg0 = traverse_monitor->arg0;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu\n",
@@ -91,8 +85,8 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 			case __NR_stat:
 			case __NR_fstat:
 			case __NR_lstat:
-				arg0 = args->arg0;				
-				arg1 = args->arg1;
+				arg0 = traverse_monitor->arg0;				
+				arg1 = traverse_monitor->arg1;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu %lu\n",
@@ -119,9 +113,9 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 			case __NR_open:
 			case __NR_read:
 			case __NR_write:
-				arg0 = args->arg0;				
-				arg1 = args->arg1;
-				arg2 = args->arg2;
+				arg0 = traverse_monitor->arg0;				
+				arg1 = traverse_monitor->arg1;
+				arg2 = traverse_monitor->arg2;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu %lu %lu\n",
@@ -143,10 +137,10 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				break;
 			case __NR_execve:
 			case __NR_wait4:
-				arg0 = args->arg0;				
-				arg1 = args->arg1;
-				arg2 = args->arg2;
-				arg3 = args->arg3;
+				arg0 = traverse_monitor->arg0;				
+				arg1 = traverse_monitor->arg1;
+				arg2 = traverse_monitor->arg2;
+				arg3 = traverse_monitor->arg3;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu %lu %lu %lu\n",
@@ -168,11 +162,11 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				break;
 			case __NR_clone:
 			case __NR_select:
-				arg0 = args->arg0;				
-				arg1 = args->arg1;
-				arg2 = args->arg2;
-				arg3 = args->arg3;
-				arg4 = args->arg4;
+				arg0 = traverse_monitor->arg0;				
+				arg1 = traverse_monitor->arg1;
+				arg2 = traverse_monitor->arg2;
+				arg3 = traverse_monitor->arg3;
+				arg4 = traverse_monitor->arg4;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu\n",
@@ -193,12 +187,12 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				}//end else
 				break;
 			case __NR_mmap:
-				arg0 = args->arg0;				
-				arg1 = args->arg1;
-				arg2 = args->arg2;
-				arg3 = args->arg3;
-				arg4 = args->arg4;
-				arg5 = args->arg5;
+				arg0 = traverse_monitor->arg0;				
+				arg1 = traverse_monitor->arg1;
+				arg2 = traverse_monitor->arg2;
+				arg3 = traverse_monitor->arg3;
+				arg4 = traverse_monitor->arg4;
+				arg5 = traverse_monitor->arg5;
 				if(first)
 				{
 					sprintf(page, "%lu %d %d args %lu %lu %lu %lu %lu %lu\n",
@@ -240,10 +234,6 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 				break;
 		}//end switch statement
      		
-
-		traverse_arg = traverse_monitor->arg_info_container;
-		vfree(traverse_arg);
-
 		list_del(temp_monitor_info);
 		vfree(traverse_monitor);
 	}//end list_for_each_safe loop
