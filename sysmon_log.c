@@ -34,17 +34,14 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	struct list_head *temp_monitor_info;
 	struct list_head *next_monitor_info;
 
-	list_for_each_safe(temp_monitor_info, next_monitor_info, monitor_info_container)
+	list_for_each_safe(temp_monitor_info, next_monitor_info, &monitor_info_container)
 	{
 		read_lock(&w_lock);		
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 
 		sysnum = traverse_monitor->syscall_num;
-		
 		pid = traverse_monitor->pid;
-		
 		tgid = traverse_monitor->tgid;
-		
 		timestamp = traverse_monitor->timestamp;
 
 		switch (sysnum)
