@@ -15,6 +15,8 @@
 #include <linux/spinlock.h>
 #include "sysmon.h"
 
+#include <linux/timex.h>
+
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
@@ -76,6 +78,9 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	int ret = 0;
 	struct monitor_info *mon_info;
 	struct timeval tv;
+
+	unsigned long long start1, end1, start2, end2, total;
+	
 	
      	printk(KERN_INFO "=====current UID: %d\n", current->uid);
 	if (current->uid != monitor_uid)
@@ -87,8 +92,10 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 		}
         	return 0;
 	}
+	start1 = get_cycles();
 	
 	write_lock(&w_lock);
+	start2 = get_cycles();
 	if(list_empty(&monitor_info_container))
 	{
      		printk(KERN_INFO "=====list monitor_info_container is empty\n");
@@ -117,7 +124,17 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	mon_info->arg3 = regs->r10;
 	mon_info->arg4 = regs->r8;
 	mon_info->arg5 = regs->r9;
+	
+	end2 = get_cycles();
+	total = end2 - start2;
+     	printk(KERN_INFO "=====total time inside lock: %llu\n", total);
+	
 	write_unlock(&w_lock);
+	
+	end1 = get_cycles();
+	total = end1 - start1;
+     	printk(KERN_INFO "=====total time outside lock: %llu\n", total);
+	
 	return ret;
 }
  
