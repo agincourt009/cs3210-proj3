@@ -91,7 +91,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-*/	
+	
 	printf("dup2, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -104,7 +104,8 @@ int main(void)
 	}
 	printf("\n");
 
-/*	printf("getpgrp, \n");
+
+	printf("getpgrp, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -151,7 +152,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-	
+*/	
 	printf("getuid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -163,7 +164,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-*/
+
 	
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
