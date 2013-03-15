@@ -19,7 +19,7 @@ int main(void)
 	char buf[40];
 	char buf_write[20] = "hello\n";
 	// syscall with kprobe
-	printf("access, \n");
+/*	printf("access, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -127,7 +127,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-	
+*/	
 	printf("getuid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
