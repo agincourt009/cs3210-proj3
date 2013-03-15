@@ -11,22 +11,10 @@
 #include <asm/current.h>
 #include <linux/cdev.h>
 #include <linux/rcupdate.h>
+#include "sysmon.h"
 
 MODULE_LICENSE("GPL");
 static struct proc_dir_entry *proc_entry;
-
-static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
-static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned long count, void *data);
-
-static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
-{
-	int length;  
-
-	length = sprintf(page, "%d", current->monitor_container->monitor_uid);
-
-  	return length;
-}//end sysmon_uid_read_proc function
-
 
 static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned long count, void *data)
 {
@@ -48,7 +36,7 @@ static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned lo
 	
 	mon_uid = (int)simple_strtol(temp, &end, 10);
 	printk(KERN_INFO "the input UID is mon_uid: %d\n", mon_uid);
-	current->monitor_container->monitor_uid = mon_uid;
+	monitor_uid = mon_uid;
 
 	return count;
 }//end sysmon_uid_write_proc function
@@ -64,7 +52,6 @@ static int __init sysmon_uid_module_init(void){
 	else
 	{
 		proc_entry->owner = THIS_MODULE;
-		proc_entry->read_proc = sysmon_uid_read_proc;
 		proc_entry->write_proc = sysmon_uid_write_proc;
 		printk(KERN_INFO "===============sysmon_uid_module_init called. Module now loaded.\n");
 	}

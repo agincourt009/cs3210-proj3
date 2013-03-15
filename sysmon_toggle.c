@@ -66,10 +66,9 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct arg_info *args;
 	
      	printk(KERN_INFO "=====current UID: %d\n", current->uid);
-	if (current->uid != (current->monitor_container)->monitor_uid)
-//	if (current->uid != 396531)
+	if (current->uid != monitor_uid)
 	{
-		if(current->monitor_container->monitor_uid == -1){
+		if(monitor_uid == -1){
 			printk(KERN_INFO "=====not set monitor_uid yet\n");
 		}else{
      			printk(KERN_INFO "=====%d is not sliang32's UID\n", current->uid);
@@ -78,18 +77,18 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	}
 	
 	write_lock(&w_lock);
-	if(list_empty(&(current->monitor_container)->monitor_info_container))
+	if(list_empty(&monitor_info_container))
 	{
      		printk(KERN_INFO "=====list monitor_info_container is empty\n");
 		mon_info = vmalloc(sizeof(mon_info));
 		INIT_LIST_HEAD(&mon_info->monitor_flow);
-		list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
+		list_add_tail(&mon_info->monitor_flow, &monitor_info_container);
      		//printk(KERN_INFO "=====add new monitor_info\n");
 	}//end if statement
 	else
 	{
 		mon_info = vmalloc(sizeof(mon_info));
-		list_add_tail(&mon_info->monitor_flow, &(current->monitor_container)->monitor_info_container);
+		list_add_tail(&mon_info->monitor_flow, &monitor_info_container);
      		//printk(KERN_INFO "=====add new monitor_info\n");
 	}//end else statement
 	mon_info->syscall_num = regs->rax;
@@ -100,150 +99,12 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	mon_info->timestamp = tv.tv_usec;
 	//printk(KERN_INFO "=====gettimeofday and get timestamp\n");
 
-	args = vmalloc(sizeof(args));
-	args->arg0 = 0;
-	args->arg1 = 0;
-	args->arg2 = 0;
-	args->arg3 = 0;
-	args->arg4 = 0;
-	args->arg5 = 0;
-	mon_info->arg_info_container = args;
-     	//printk(KERN_INFO "=====allocate arg_info structure\n");
-	
-	switch (regs->rax) {
-        	case __NR_access:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-            		break;
-        	case __NR_brk:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_chdir:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_chmod:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_clone:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			args->arg3 = regs->r10;
-			args->arg4 = regs->r8;
-			break;
-        	case __NR_close:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_dup:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_dup2:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_execve:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			args->arg3 = regs->r10;
-			break;
-        	case __NR_exit_group:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_fcntl:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_fork:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_getdents:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_getpid:
-			break;
-        	case __NR_gettid:
-			break;
-        	case __NR_ioctl:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_lseek:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_mkdir:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_mmap:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			args->arg3 = regs->r10;
-			args->arg4 = regs->r8;
-			args->arg5 = regs->r9;
-			break;
-        	case __NR_munmap:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_open:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_pipe:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_read:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	case __NR_rmdir:
-			args->arg0 = regs->rdi;
-			break;
-        	case __NR_select:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			args->arg3 = regs->r10;
-			args->arg4 = regs->r8;
-			break;
-        	case __NR_stat:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_fstat:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_lstat:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			break;
-        	case __NR_wait4:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			args->arg3 = regs->r10;
-			break;
-        	case __NR_write:
-			args->arg0 = regs->rdi;
-			args->arg1 = regs->rsi;
-			args->arg2 = regs->rdx;
-			break;
-        	default:
-            		ret = 0;
-            	break;
-	}
+	mon_info->arg0 = regs->rdi;
+	mon_info->arg1 = regs->rsi;
+	mon_info->arg2 = regs->rdx;
+	mon_info->arg3 = regs->r10;
+	mon_info->arg4 = regs->r8;
+	mon_info->arg5 = regs->r9;
 	write_unlock(&w_lock);
 	return ret;
 }
@@ -834,11 +695,12 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
      		printk(KERN_INFO "=====register kprobe\n");
 
-		monitor = vmalloc(sizeof(*monitor));	
+		/*monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
      		printk(KERN_INFO "=====allocate memory for current->monitor_container\n");
 		INIT_LIST_HEAD(&(monitor->monitor_info_container));
-     		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");
+     		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");*/
+		
 		monitor->monitor_uid = -1;
 
 		rcu_read_lock();
