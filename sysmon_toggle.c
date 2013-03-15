@@ -18,6 +18,7 @@ MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
 static struct proc_dir_entry *proc_entry;
+static struct rwlock_t w_lock;
 
 static struct kprobe *probe_access;	//1. sys_access,	21, 	__NR_access, 	2 args
 static struct kprobe *probe_brk;	//2. sys_brk, 		12, 	__NR_brk, 	1 arg
@@ -61,7 +62,6 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct monitor_info *mon_info;
 	struct timeval tv;
 	struct arg_info *args;
-	rwlock_t w_lock = RW_LOCK_UNLOCKED;
 	
      	printk(KERN_INFO "=====current UID: %d\n", current->uid);
 	if (current->uid != (current->monitor_container)->monitor_uid)
@@ -946,6 +946,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
 static int __init sysmon_toggle_module_init(void){
 	int rv = 0;
+	w_lock = RW_LOCK_UNLOCKED;
 	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
 	{

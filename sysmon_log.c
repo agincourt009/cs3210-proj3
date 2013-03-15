@@ -16,6 +16,7 @@
 MODULE_LICENSE("GPL");
 
 static struct proc_dir_entry *proc_entry;
+extern static struct rwlock_t w_lock;
 
 //static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 
@@ -33,13 +34,12 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 	struct monitor_info *traverse_monitor;
 	struct list_head *temp_monitor_info;
 	struct list_head *next_monitor_info;
-	rwlock_t r_lock = RW_LOCK_UNLOCKED;
 
 	struct user_monitor *container = current->monitor_container;
 
 	list_for_each_safe(temp_monitor_info, next_monitor_info, &container->monitor_info_container)
 	{
-		read_lock(&r_lock);		
+		read_lock(&w_lock);		
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
 
 		sysnum = traverse_monitor->syscall_num;
@@ -246,7 +246,7 @@ static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, 
 		list_del(temp_monitor_info);
 		vfree(traverse_monitor);
 	}//end list_for_each_safe loop
-	read_unlock(&r_lock);
+	read_unlock(&w_lock);
 	*eof = 1;
 	return count;
 }//end sysmon_log_read_proc function
