@@ -30,7 +30,7 @@ int main(void)
 		return 1;
 	}
 	
-	printf("Kprobe toggled ON\n");
+//	printf("Kprobe toggled ON\n");
 	file = fopen(FILE_PATH_UID, "w");
 	if(file != NULL){
 		fprintf(file, "396531", "396531");
@@ -40,8 +40,8 @@ int main(void)
 		printf("sysmon_uid not open\n");
 		return 1;
 	}
-	printf("Set UID\n");
-
+//	printf("Set UID\n");
+/*
 	printf("access, ");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -54,7 +54,7 @@ int main(void)
 	}
 	printf("\n");
 	
-	printf("getpid, ");
+	printf("getpid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -65,8 +65,9 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
+
 	
-	printf("gettid, ");
+	printf("gettid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -77,6 +78,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
+
 
 	printf("dup, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
@@ -89,7 +91,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-	
+*/	
 	printf("dup2, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -102,7 +104,7 @@ int main(void)
 	}
 	printf("\n");
 
-	printf("getpgrp, \n");
+/*	printf("getpgrp, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -161,7 +163,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-
+*/
 	
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
@@ -172,6 +174,6 @@ int main(void)
 		return 1;
 	}
 	
-	printf("Kprobe toggled OFF\n");
+//	printf("Kprobe toggled OFF\n");
 	return 0;
 }
