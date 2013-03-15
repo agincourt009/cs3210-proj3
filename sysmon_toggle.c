@@ -63,13 +63,14 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct arg_info *args;
 	rwlock_t w_lock = RW_LOCK_UNLOCKED;
 	
-	//if (current->uid != (current->monitor_container)->monitor_uid)
-	if (current->uid != 396531)
+     	printk(KERN_INFO "=====current UID: %d\n", current->uid);
+	if (current->uid != (current->monitor_container)->monitor_uid)
+//	if (current->uid != 396531)
 	{
-		if(current->monitor_container->monitor_uid == 0){
+		if(current->monitor_container->monitor_uid == -1){
 			printk(KERN_INFO "=====not set monitor_uid yet\n");
 		}else{
-     			printk(KERN_INFO "=====not sliang32's UID\n");
+     			printk(KERN_INFO "=====%d is not sliang32's UID\n", current->uid);
 		}
         	return 0;
 	}
@@ -836,7 +837,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
      		printk(KERN_INFO "=====allocate memory for current->monitor_container\n");
 		INIT_LIST_HEAD(&(monitor->monitor_info_container));
      		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");
-		monitor->monitor_uid = 0;
+		monitor->monitor_uid = -1;
 
 		rcu_read_lock();
 		do_each_thread(temp_task, n_thread)

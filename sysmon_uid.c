@@ -30,7 +30,6 @@ static int sysmon_uid_read_proc(char *page, char **start, off_t off, int count, 
 
 static int sysmon_uid_write_proc(struct file *file, const char *buf, unsigned long count, void *data)
 {
-	static const int UID_SIZE = sizeof(int);
 	int mon_uid;
 	char temp[256];
 	char* end;

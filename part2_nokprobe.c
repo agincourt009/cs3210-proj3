@@ -19,28 +19,6 @@ int main(void)
 	unsigned int index_epoch = 0;
 
 	unsigned long long start, end, total;
-	FILE *file;
-	
-	file = fopen(FILE_PATH_TOGGLE, "w");
-	if(file != NULL){
-		fprintf(file, "1", "1");
-		fclose(file);
-	}else{
-		printf("sysmon_toggle not open\n");
-		return 1;
-	}
-	
-	printf("Kprobe toggled ON\n");
-	file = fopen(FILE_PATH_UID, "w");
-	if(file != NULL){
-		fprintf(file, "396531", "396531");
-		//fprintf(file, "0", "0");
-		fclose(file);
-	}else{
-		printf("sysmon_uid not open\n");
-		return 1;
-	}
-	printf("Set UID\n");
 
 	printf("access, ");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
@@ -78,15 +56,5 @@ int main(void)
 	}
 	printf("\n");
 	
-	file = fopen(FILE_PATH_TOGGLE, "w");
-	if(file != NULL){
-		fprintf(file, "0", "0");
-		fclose(file);
-	}else{
-		printf("sysmon_toggle not open\n");
-		return 1;
-	}
-	
-	printf("Kprobe toggled OFF\n");
 	return 0;
 }
