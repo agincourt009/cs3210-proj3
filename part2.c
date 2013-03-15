@@ -77,6 +77,91 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
+
+	printf("dup, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_dup, 0);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+	
+	printf("dup2, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_dup2, 0, 1);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+
+	printf("getpgrp, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_getpgrp);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+	
+	printf("getgid, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_getgid);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+	
+	printf("getppid, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_getppid);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+	
+	printf("getegid, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_getegid);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+	
+	printf("getuid, \n");
+	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
+		start = rdtsc();
+		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
+			syscall(SYS_getuid);
+		}
+		end = rdtsc();
+		total = end - start;
+		printf("%llu, \n", total);
+	}
+	printf("\n");
+
 	
 	file = fopen(FILE_PATH_TOGGLE, "w");
 	if(file != NULL){
