@@ -63,7 +63,6 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	int ret = 0;
 	struct monitor_info *mon_info;
 	struct timeval tv;
-	struct arg_info *args;
 	
      	printk(KERN_INFO "=====current UID: %d\n", current->uid);
 	if (current->uid != monitor_uid)
@@ -127,10 +126,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	int input;
 	char temp[sizeof(int)];
 	char* end;
-	struct user_monitor *monitor;
-	
-	struct task_struct *n_thread;
-	struct task_struct *temp_task;
 
 	if(count> INPUT_SIZE)
 	{
@@ -148,6 +143,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	
 	if(input == 1)
 	{
+		kprobe_toggle = 1;
     		printk(KERN_INFO "=====toggle kprobe on\n");
 		// probe_access
 		if(probe_access == NULL){
@@ -694,6 +690,8 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		
 
      		printk(KERN_INFO "=====register kprobe\n");
+		
+		monitor_uid = -1;
 
 		/*monitor = vmalloc(sizeof(*monitor));	
 		current->monitor_container = monitor;
@@ -701,18 +699,18 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		INIT_LIST_HEAD(&(monitor->monitor_info_container));
      		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");*/
 		
-		monitor->monitor_uid = -1;
 
-		rcu_read_lock();
+		/*write_lock(&w_lock);
 		do_each_thread(temp_task, n_thread)
 		{
 			temp_task->monitor_container = monitor;
 		}while_each_thread(temp_task, n_thread);
-		rcu_read_unlock();
+		write_lock(&w_lock);*/
 
 	
 	}//end if statement
 	else if(input == 0){
+		kprobe_toggle = 0;
 		
 		printk(KERN_INFO "Unregistering kprobe\n");
 		unregister_kprobe(probe_access);	
@@ -732,7 +730,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		unregister_kprobe(probe_gettid);	
 		unregister_kprobe(probe_ioctl);	
 		unregister_kprobe(probe_lseek);	
-
 		unregister_kprobe(probe_mkdir);	
 		unregister_kprobe(probe_mmap);	
 		unregister_kprobe(probe_munmap);	
@@ -764,7 +761,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		vfree(probe_gettid);	
 		vfree(probe_ioctl);	
 		vfree(probe_lseek);	
-
 		vfree(probe_mkdir);	
 		vfree(probe_mmap);	
 		vfree(probe_munmap);	
@@ -779,24 +775,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 		vfree(probe_wait4);	
 		vfree(probe_write);	
 
-
-/*		list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
-			traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
-			traverse_arg = traverse_monitor->arg_info_container;
-			vfree(traverse_arg);
-			list_del(temp_monitor_info);
-			vfree(traverse_monitor);
-		}
-	
-		vfree(current->monitor_container);
-		
-		rcu_read_lock();
-		do_each_thread(temp_task, n_thread)
-		{
-			temp_task->monitor_container = NULL;
-		}while_each_thread(temp_task, n_thread);
-		rcu_read_unlock();
-*/		
 	}//end else if
 
 	else
@@ -811,6 +789,7 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 static int __init sysmon_toggle_module_init(void){
 	int rv = 0;
 	w_lock = RW_LOCK_UNLOCKED;
+	kprobe_toggle = 0;
 	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
 	{
@@ -831,29 +810,15 @@ static void __exit sysmon_toggle_module_cleanup(void){
 	
 	struct list_head *temp_monitor_info;
 	struct list_head *next_monitor_info;
-	struct arg_info *traverse_arg;
 	struct monitor_info *traverse_monitor;
 
-	struct task_struct *n_thread;
-	struct task_struct *temp_task;
 	
-	list_for_each_safe(temp_monitor_info, next_monitor_info, &(current->monitor_container)->monitor_info_container){
+	list_for_each_safe(temp_monitor_info, next_monitor_info, &monitor_info_container){
 		traverse_monitor = list_entry(temp_monitor_info, struct monitor_info, monitor_flow);
-		traverse_arg = traverse_monitor->arg_info_container;
-		vfree(traverse_arg);
 		list_del(temp_monitor_info);
 		vfree(traverse_monitor);
 	}
 	
-	vfree(current->monitor_container);
-		
-	rcu_read_lock();
-	do_each_thread(temp_task, n_thread)
-	{
-		temp_task->monitor_container = NULL;
-	}while_each_thread(temp_task, n_thread);
-	rcu_read_unlock();
-
 	remove_proc_entry("sysmon_toggle", proc_entry);
 	printk(KERN_INFO "=====sysmon_toggle_module_cleanup called. Module unloaded\n");
 }
