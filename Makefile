@@ -16,10 +16,10 @@ sysmon.o: sysmon.c
 sysmon_uid.o: sysmon_uid.c
 	make -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
 
-sysmon_toggle.o: sysmon_toggle.c
+sysmon_toggle.o: sysmon_toggle.c sysmon.h
 	make -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
 
-sysmon_log.o: sysmon_log.c
+sysmon_log.o: sysmon_log.c sysmon.h
 	make -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
 
 systest: systest.c

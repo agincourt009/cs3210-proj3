@@ -12,11 +12,12 @@
 #include <linux/rcupdate.h>
 #include <linux/kprobes.h>
 #include <linux/spinlock.h>
+#include "sysmon.h"
 
 MODULE_LICENSE("GPL");
 
 static struct proc_dir_entry *proc_entry;
-extern static struct rwlock_t w_lock;
+//extern rwlock_t w_lock;
 
 //static int sysmon_log_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 

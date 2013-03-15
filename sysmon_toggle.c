@@ -13,12 +13,14 @@
 #include <linux/time.h>
 #include <linux/kprobes.h>
 #include <linux/spinlock.h>
+#include "sysmon.h"
 
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
 
 static struct proc_dir_entry *proc_entry;
-static struct rwlock_t w_lock;
+
+//rwlock_t w_lock;
 
 static struct kprobe *probe_access;	//1. sys_access,	21, 	__NR_access, 	2 args
 static struct kprobe *probe_brk;	//2. sys_brk, 		12, 	__NR_brk, 	1 arg
