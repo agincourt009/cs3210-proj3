@@ -125,15 +125,7 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	mon_info->arg4 = regs->r8;
 	mon_info->arg5 = regs->r9;
 	
-	//end2 = get_cycles();
-	//total = end2 - start2;
-     	//printk(KERN_INFO "=====total time inside lock: %llu\n", total);
-	
 	write_unlock(&w_lock);
-	
-	//end1 = get_cycles();
-	//total = end1 - start1;
-     	//printk(KERN_INFO "=====total time outside lock: %llu\n", total);
 	
 	return ret;
 }
@@ -721,21 +713,6 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
      		printk(KERN_INFO "=====register kprobe\n");
 		
-
-		/*monitor = vmalloc(sizeof(*monitor));	
-		current->monitor_container = monitor;
-     		printk(KERN_INFO "=====allocate memory for current->monitor_container\n");
-		INIT_LIST_HEAD(&(monitor->monitor_info_container));
-     		printk(KERN_INFO "=====initial list head for current->monitor_container->monitor_info_container\n");*/
-		
-
-		/*write_lock(&w_lock);
-		do_each_thread(temp_task, n_thread)
-		{
-			temp_task->monitor_container = monitor;
-		}while_each_thread(temp_task, n_thread);
-		write_lock(&w_lock);*/
-
 	
 	}//end if statement
 	else if(input == 0){
