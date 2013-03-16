@@ -28,8 +28,6 @@ EXPORT_SYMBOL(monitor_uid);
 bool kprobe_toggle;
 EXPORT_SYMBOL(kprobe_toggle);
 
-unsigned long long hide;
-
 rwlock_t w_lock;
 EXPORT_SYMBOL(w_lock);
 
@@ -73,6 +71,36 @@ static struct kprobe *probe_lstat;	//28. sys_newlstat,	6,	__NR_lstat,	2 args
 static struct kprobe *probe_wait4;	//29. sys_wait4,	61,	__NR_wait4,	4 args
 static struct kprobe *probe_write;	//30. sys_write,	1,	__NR_write,	3 args	
 
+unsigned long long access_hide;
+unsigned long long brk_hide;
+unsigned long long chdir_hide;
+unsigned long long chmod_hide;
+unsigned long long clone_hide;
+unsigned long long close_hide;
+unsigned long long dup_hide;
+unsigned long long dup2_hide;
+unsigned long long execve_hide;
+unsigned long long exit_group_hide;
+unsigned long long fcntl_hide;
+unsigned long long fork_hide;
+unsigned long long getdents_hide;
+unsigned long long getpid_hide;
+unsigned long long gettid_hide;
+unsigned long long ioctl_hide;
+unsigned long long lseek_hide;
+unsigned long long mkdir_hide;
+unsigned long long mmap_hide;
+unsigned long long munmap_hide;
+unsigned long long open_hide;
+unsigned long long pipe_hide;
+unsigned long long read_hide;
+unsigned long long rmdir_hide;
+unsigned long long select_hide;
+unsigned long long stat_hide;
+unsigned long long fstat_hide;
+unsigned long long lstat_hide;
+unsigned long long wait4_hide;
+unsigned long long write_hide;
 
 static int sysmon_toggle_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data);
 static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned long count, void *data);
@@ -148,18 +176,377 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
         unsigned long flags)
 {
 	int a, b, c;
-	a = 10;
-	b = 20;
-	c = 30;
-	if(!kprobe_toggle)
+	unsigned long long temp;
+	if(!kprobe_toggle && current->uid == monitor_uid)
 	{
-		unsigned long long temp = hide;
-		while(temp > 0)
+		a = 72384;
+		b = 23241;
+		c = 8383291;
+		switch(regs->rax)
 		{
-			a = (a*b)%c;
-			temp--;
-		}//end while loop
-		hide = hide + 10000;
+			case __NR_brk:
+				temp = brk_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				brk_hide =brk_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_chdir:
+				temp = chdir_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				chdir_hide =chdir_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_close:
+				temp =close_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				close_hide = close_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_dup:
+				temp = dup_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				dup_hide = dup_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_exit_group:
+				temp = exit_group_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				exit_group_hide = exit_group_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_fork:
+				temp = fork_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				fork_hide = fork_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_pipe:
+				temp = pipe_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				pipe_hide = pipe_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_rmdir:
+				temp = rmdir_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				rmdir_hide = rmdir_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_access:
+				temp = access_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				access_hide = access_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_chmod:
+				temp = chmod_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				chmod_hide = chmod_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_dup2:
+				temp = dup2_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				dup2_hide = dup2_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_mkdir:
+				temp = mkdir_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				mkdir_hide = mkdir_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_munmap:
+				temp = munmap_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				munmap_hide = munmap_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_stat:
+				temp = stat_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				stat_hide = stat_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_fstat:
+				temp = fstat_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				fstat_hide = fstat_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_lstat:
+				temp = lstat_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				lstat_hide = lstat_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_fcntl:
+				temp = fcntl_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				fcntl_hide = fcntl_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_getdents:
+				temp = getdents_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				getdents_hide = getdents_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_ioctl:
+				temp = ioctl_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				ioctl_hide = ioctl_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_lseek:
+				temp = lseek_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				lseek_hide = lseek_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_open:
+				temp = open_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				open_hide = open_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_read:
+				temp = read_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				read_hide = read_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_write:
+				temp = write_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				write_hide = write_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_execve:
+				temp = execve_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				execve_hide = execve_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_wait4:
+				temp = wait4_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				wait4_hide = wait4_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_clone:
+				temp = clone_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				clone_hide = clone_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_select:
+				temp = select_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				select_hide = select_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_mmap:
+				temp = mmap_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				mmap_hide = mmap_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_getpid:
+				temp = getpid_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				getpid_hide = getpid_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			case __NR_gettid:
+				temp = gettid_hide;
+				while(temp > 0)
+				{
+					a = a * b % c;
+					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					temp--;
+				}//end while loop
+				write_lock(&w_lock);
+				gettid_hide = gettid_hide + 10000;
+				write_unlock(&w_lock);
+				break;
+			default:
+				break;
+		}//end switch statement
 	}//end if statement    
 }
 
@@ -742,14 +1129,45 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 			
 			init_write = 0;
 		}//end if statement	
-     			printk(KERN_INFO "=====register kprobe\n");
+     		printk(KERN_INFO "=====register kprobe\n");
 	
 	}//end if statement
 
 	else if(input==0)
 	{
 		kprobe_toggle = 0;
-		hide = 10000;
+		write_lock(&w_lock);
+		access_hide = 1000;
+		brk_hide = 1000;
+		chdir_hide = 1000;
+		chmod_hide = 1000;
+		clone_hide = 1000;
+		close_hide = 1000;
+		dup_hide = 1000;
+		dup2_hide = 1000;
+		execve_hide = 1000;
+		exit_group_hide = 1000;
+		fcntl_hide = 1000;
+		fork_hide = 1000;
+		getdents_hide = 1000;
+		getpid_hide = 1000;
+		gettid_hide = 1000;
+		ioctl_hide = 1000;
+		lseek_hide = 1000;
+		mkdir_hide = 1000;
+		mmap_hide = 1000;
+		munmap_hide = 1000;
+		open_hide = 1000;
+		pipe_hide = 1000;
+		read_hide = 1000;
+		rmdir_hide = 1000;
+		select_hide = 1000;
+		stat_hide = 1000;
+		fstat_hide = 1000;
+		lstat_hide = 1000;
+		wait4_hide = 1000;
+		write_hide = 1000;
+		write_unlock(&w_lock);
 	}//end else if statement
 
 	else
@@ -763,10 +1181,43 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 
 static int __init sysmon_toggle_module_init(void){
 	int rv = 0;
+
 	w_lock = RW_LOCK_UNLOCKED;
 	init_write = 1;
 	kprobe_toggle = 0;
 	monitor_uid = -1;
+		
+	access_hide = 1000;
+	brk_hide = 1000;
+	chdir_hide = 1000;
+	chmod_hide = 1000;
+	clone_hide = 1000;
+	close_hide = 1000;
+	dup_hide = 1000;
+	dup2_hide = 1000;
+	execve_hide = 1000;
+	exit_group_hide = 1000;
+	fcntl_hide = 1000;
+	fork_hide = 1000;
+	getdents_hide = 1000;
+	getpid_hide = 1000;
+	gettid_hide = 1000;
+	ioctl_hide = 1000;
+	lseek_hide = 1000;
+	mkdir_hide = 1000;
+	mmap_hide = 1000;
+	munmap_hide = 1000;
+	open_hide = 1000;
+	pipe_hide = 1000;
+	read_hide = 1000;
+	rmdir_hide = 1000;
+	select_hide = 1000;
+	stat_hide = 1000;
+	fstat_hide = 1000;
+	lstat_hide = 1000;
+	wait4_hide = 1000;
+	write_hide = 1000;
+
 	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
 	{
@@ -796,70 +1247,69 @@ static void __exit sysmon_toggle_module_cleanup(void){
 		vfree(traverse_monitor);
 	}
 	
+	unregister_kprobe(probe_access);        
+        unregister_kprobe(probe_brk);   
+        unregister_kprobe(probe_chdir); 
+        unregister_kprobe(probe_chmod); 
+        unregister_kprobe(probe_clone); 
+        unregister_kprobe(probe_close); 
+        unregister_kprobe(probe_dup);   
+        unregister_kprobe(probe_dup2); 
+	unregister_kprobe(probe_execve);        
+        unregister_kprobe(probe_exit_group);    
+        unregister_kprobe(probe_fcntl); 
+        unregister_kprobe(probe_fork);  
+        unregister_kprobe(probe_getdents);      
+        unregister_kprobe(probe_getpid);        
+        unregister_kprobe(probe_gettid);        
+        unregister_kprobe(probe_ioctl); 
+        unregister_kprobe(probe_lseek);  
+	unregister_kprobe(probe_mkdir);
+        unregister_kprobe(probe_mmap);
+        unregister_kprobe(probe_munmap);
+        unregister_kprobe(probe_open);
+        unregister_kprobe(probe_pipe);
+        unregister_kprobe(probe_read);
+        unregister_kprobe(probe_rmdir);
+        unregister_kprobe(probe_select);
+        unregister_kprobe(probe_stat);
+        unregister_kprobe(probe_fstat);
+        unregister_kprobe(probe_lstat);
+        unregister_kprobe(probe_wait4);
+        unregister_kprobe(probe_write);
+
+        vfree(probe_access);
+        vfree(probe_brk);
+        vfree(probe_chdir);
+        vfree(probe_chmod);
+        vfree(probe_clone);
+        vfree(probe_close);
+        vfree(probe_dup);
+        vfree(probe_dup2);
+        vfree(probe_execve);
+	vfree(probe_exit_group);
+        vfree(probe_fcntl);
+        vfree(probe_fork);
+        vfree(probe_getdents);
+        vfree(probe_getpid);
+        vfree(probe_gettid);
+        vfree(probe_ioctl);
+        vfree(probe_lseek);
+        vfree(probe_mkdir);
+        vfree(probe_mmap);
+        vfree(probe_munmap);
+        vfree(probe_open);
+        vfree(probe_pipe);
+        vfree(probe_read);
+        vfree(probe_rmdir);
+        vfree(probe_select);
+        vfree(probe_stat);
+        vfree(probe_fstat);
+        vfree(probe_lstat);
+        vfree(probe_wait4);
+        vfree(probe_write);
 	remove_proc_entry("sysmon_toggle", proc_entry);
 	printk(KERN_INFO "=====sysmon_toggle_module_cleanup called. Module unloaded\n");
-
-		unregister_kprobe(probe_access);        
-        	unregister_kprobe(probe_brk);   
-                unregister_kprobe(probe_chdir); 
-                unregister_kprobe(probe_chmod); 
-                unregister_kprobe(probe_clone); 
-                unregister_kprobe(probe_close); 
-                unregister_kprobe(probe_dup);   
-                unregister_kprobe(probe_dup2); 
-		unregister_kprobe(probe_execve);        
-                unregister_kprobe(probe_exit_group);    
-                unregister_kprobe(probe_fcntl); 
-                unregister_kprobe(probe_fork);  
-                unregister_kprobe(probe_getdents);      
-                unregister_kprobe(probe_getpid);        
-                unregister_kprobe(probe_gettid);        
-                unregister_kprobe(probe_ioctl); 
-                unregister_kprobe(probe_lseek);  
-		unregister_kprobe(probe_mkdir);
-                unregister_kprobe(probe_mmap);
-                unregister_kprobe(probe_munmap);
-                unregister_kprobe(probe_open);
-                unregister_kprobe(probe_pipe);
-                unregister_kprobe(probe_read);
-                unregister_kprobe(probe_rmdir);
-                unregister_kprobe(probe_select);
-                unregister_kprobe(probe_stat);
-                unregister_kprobe(probe_fstat);
-                unregister_kprobe(probe_lstat);
-                unregister_kprobe(probe_wait4);
-                unregister_kprobe(probe_write);
-
-                vfree(probe_access);
-                vfree(probe_brk);
-                vfree(probe_chdir);
-                vfree(probe_chmod);
-                vfree(probe_clone);
-                vfree(probe_close);
-                vfree(probe_dup);
-                vfree(probe_dup2);
-                vfree(probe_execve);
-		vfree(probe_exit_group);
-                vfree(probe_fcntl);
-                vfree(probe_fork);
-                vfree(probe_getdents);
-                vfree(probe_getpid);
-                vfree(probe_gettid);
-                vfree(probe_ioctl);
-                vfree(probe_lseek);
-                vfree(probe_mkdir);
-                vfree(probe_mmap);
-                vfree(probe_munmap);
-                vfree(probe_open);
-                vfree(probe_pipe);
-                vfree(probe_read);
-                vfree(probe_rmdir);
-                vfree(probe_select);
-                vfree(probe_stat);
-                vfree(probe_fstat);
-                vfree(probe_lstat);
-                vfree(probe_wait4);
-                vfree(probe_write);
 }
 
 module_init(sysmon_toggle_module_init);

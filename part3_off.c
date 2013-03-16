@@ -19,6 +19,9 @@ int main(void)
 	unsigned int index_epoch = 0;
 
 	unsigned long long start, end, total;
+	char buf[40];
+	char buf_write[20] = "hello\n";
+
 	FILE *file;
 	
 	file = fopen(FILE_PATH_TOGGLE, "w");
@@ -30,7 +33,7 @@ int main(void)
 		return 1;
 	}
 	
-//	printf("Kprobe toggled ON\n");
+	printf("Kprobe toggled ON\n");
 	file = fopen(FILE_PATH_UID, "w");
 	if(file != NULL){
 		fprintf(file, "396531", "396531");
@@ -40,9 +43,19 @@ int main(void)
 		printf("sysmon_uid not open\n");
 		return 1;
 	}
-//	printf("Set UID\n");
-/*
-	printf("access, ");
+	printf("Kprobe set uid\n");
+	
+	file = fopen(FILE_PATH_TOGGLE, "w");
+	if(file != NULL){
+		fprintf(file, "0", "0");
+		fclose(file);
+	}else{
+		printf("sysmon_toggle not open\n");
+		return 1;
+	}
+	printf("Kprobe toggled off\n");
+	// syscall with kprobe
+/*	printf("access, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -53,7 +66,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-	
+*/	
 	printf("getpid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -65,8 +78,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-
-	
+/*	
 	printf("gettid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -78,8 +90,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-
-
+	
 	printf("dup, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -104,7 +115,7 @@ int main(void)
 	}
 	printf("\n");
 
-
+	// syscall without kprobe
 	printf("getpgrp, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -152,7 +163,7 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-*/	
+
 	printf("getuid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -164,17 +175,6 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-
-	
-	file = fopen(FILE_PATH_TOGGLE, "w");
-	if(file != NULL){
-		fprintf(file, "0", "0");
-		fclose(file);
-	}else{
-		printf("sysmon_toggle not open\n");
-		return 1;
-	}
-	
-//	printf("Kprobe toggled OFF\n");
+*/
 	return 0;
 }
