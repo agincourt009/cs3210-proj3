@@ -13,7 +13,7 @@
 
 int main(void)
 {
-	unsigned int syscall_number = 1024;
+	unsigned int syscall_number = 128;
 	unsigned int epoch = 100;
 	unsigned int index_syscall = 0;
 	unsigned int index_epoch = 0;
@@ -41,7 +41,7 @@ int main(void)
 		return 1;
 	}
 //	printf("Set UID\n");
-/*
+
 	printf("access, ");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
@@ -53,8 +53,8 @@ int main(void)
 		printf("%llu, \n", total);
 	}
 	printf("\n");
-*/	
-	printf("getpid, \n");
+	
+/*	printf("getpid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
 		for(index_syscall = 0; index_syscall < syscall_number; index_syscall++){
@@ -66,7 +66,7 @@ int main(void)
 	}
 	printf("\n");
 
-/*
+
 	printf("gettid, \n");
 	for(index_epoch = 0; index_epoch < epoch; index_epoch++){
 		start = rdtsc();
