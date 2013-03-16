@@ -19,6 +19,7 @@
 
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
+#define HIDE_MAX 1000000
 
 static bool init_write;
 
@@ -111,8 +112,6 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 	struct monitor_info *mon_info;
 	struct timeval tv;
 
-	//unsigned long long start1, end1, start2, end2, total;
-	
 	if(kprobe_toggle)
 	{
      		printk(KERN_INFO "=====current UID: %d\n", current->uid);
@@ -125,31 +124,25 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 			}
         		return 0;
 		}
-		//start1 = get_cycles();
 		
 		write_lock(&w_lock);
-		//start2 = get_cycles();
 		if(list_empty(&monitor_info_container))
 		{
      			printk(KERN_INFO "=====list monitor_info_container is empty\n");
 			mon_info = vmalloc(sizeof(mon_info));
 			INIT_LIST_HEAD(&mon_info->monitor_flow);
 			list_add_tail(&mon_info->monitor_flow, &monitor_info_container);
-     			//printk(KERN_INFO "=====add new monitor_info\n");
 		}//end if statement
 		else
 		{
 			mon_info = vmalloc(sizeof(mon_info));
 			list_add_tail(&mon_info->monitor_flow, &monitor_info_container);
-     			//printk(KERN_INFO "=====add new monitor_info\n");
 		}//end else statement
 		mon_info->syscall_num = regs->rax;
 		mon_info->pid = current->pid;
 		mon_info->tgid = current->tgid;
-     		//printk(KERN_INFO "=====stored syscall number, pid, tgid\n");
 		do_gettimeofday(&tv);
 		mon_info->timestamp = tv.tv_usec;
-		//printk(KERN_INFO "=====gettimeofday and get timestamp\n");
 	
 		mon_info->arg0 = regs->rdi;
 		mon_info->arg1 = regs->rsi;
@@ -158,15 +151,8 @@ static int sysmon_intercept_before(struct kprobe *kp, struct pt_regs *regs)
 		mon_info->arg4 = regs->r8;
 		mon_info->arg5 = regs->r9;
 		
-		//end2 = get_cycles();
-		//total = end2 - start2;
-     		//printk(KERN_INFO "=====total time inside lock: %llu\n", total);
-		
 		write_unlock(&w_lock);
 		
-		//end1 = get_cycles();
-		//total = end1 - start1;
-     		//printk(KERN_INFO "=====total time outside lock: %llu\n", total);
 	}//end if statement
 		
 		return ret;
@@ -193,7 +179,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				brk_hide =brk_hide + 10000;
+				if(brk_hide + 1000 <= HIDE_MAX)
+					brk_hide =brk_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_chdir:
@@ -205,7 +192,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				chdir_hide =chdir_hide + 10000;
+				if(chdir_hide + 1000 <= HIDE_MAX)
+					chdir_hide =chdir_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_close:
@@ -217,7 +205,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				close_hide = close_hide + 10000;
+				if(close_hide + 1000 <= HIDE_MAX)
+					close_hide = close_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_dup:
@@ -229,7 +218,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				dup_hide = dup_hide + 10000;
+				if(dup_hide + 1000 <= HIDE_MAX)
+					dup_hide = dup_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_exit_group:
@@ -241,7 +231,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				exit_group_hide = exit_group_hide + 10000;
+				if(exit_group_hide + 1000 <= HIDE_MAX)
+					exit_group_hide = exit_group_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_fork:
@@ -253,7 +244,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				fork_hide = fork_hide + 10000;
+				if(fork_hide + 1000 <= HIDE_MAX)
+					fork_hide = fork_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_pipe:
@@ -265,7 +257,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				pipe_hide = pipe_hide + 10000;
+				if(pipe_hide + 1000 <= HIDE_MAX)
+					pipe_hide = pipe_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_rmdir:
@@ -277,7 +270,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				rmdir_hide = rmdir_hide + 10000;
+				if(rmdir_hide + 1000 <= HIDE_MAX)
+					rmdir_hide = rmdir_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_access:
@@ -289,7 +283,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				access_hide = access_hide + 10000;
+				if(access_hide + 1000 <= HIDE_MAX)
+					access_hide = access_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_chmod:
@@ -301,7 +296,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				chmod_hide = chmod_hide + 10000;
+				if(chmod_hide + 1000 <= HIDE_MAX)
+					chmod_hide = chmod_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_dup2:
@@ -313,7 +309,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				dup2_hide = dup2_hide + 10000;
+				if(dup2_hide + 1000 <= HIDE_MAX)
+					dup2_hide = dup2_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_mkdir:
@@ -325,7 +322,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				mkdir_hide = mkdir_hide + 10000;
+				if(mkdir_hide + 1000 <= HIDE_MAX)
+					mkdir_hide = mkdir_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_munmap:
@@ -337,7 +335,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				munmap_hide = munmap_hide + 10000;
+				if(munmap_hide + 1000 <= HIDE_MAX)
+					munmap_hide = munmap_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_stat:
@@ -349,7 +348,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				stat_hide = stat_hide + 10000;
+				if(stat_hide + 1000 <= HIDE_MAX)
+					stat_hide = stat_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_fstat:
@@ -361,7 +361,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				fstat_hide = fstat_hide + 10000;
+				if(fstat_hide + 1000 <= HIDE_MAX)
+					fstat_hide = fstat_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_lstat:
@@ -373,7 +374,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				lstat_hide = lstat_hide + 10000;
+				if(lstat_hide + 1000 <= HIDE_MAX)
+					lstat_hide = lstat_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_fcntl:
@@ -385,7 +387,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				fcntl_hide = fcntl_hide + 10000;
+				if(fcntl_hide + 1000 <= HIDE_MAX)
+					fcntl_hide = fcntl_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_getdents:
@@ -397,7 +400,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				getdents_hide = getdents_hide + 10000;
+				if(getdents_hide + 1000 <= HIDE_MAX)
+					getdents_hide = getdents_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_ioctl:
@@ -409,7 +413,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				ioctl_hide = ioctl_hide + 10000;
+				if(ioctl_hide + 1000 <= HIDE_MAX)
+					ioctl_hide = ioctl_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_lseek:
@@ -421,7 +426,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				lseek_hide = lseek_hide + 10000;
+				if(lseek_hide + 1000 <= HIDE_MAX)
+					lseek_hide = lseek_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_open:
@@ -433,7 +439,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				open_hide = open_hide + 10000;
+				if(open_hide + 1000 <= HIDE_MAX)
+					open_hide = open_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_read:
@@ -445,7 +452,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				read_hide = read_hide + 10000;
+				if(read_hide + 1000 <= HIDE_MAX)
+					read_hide = read_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_write:
@@ -457,7 +465,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				write_hide = write_hide + 10000;
+				if(write_hide + 1000 <= HIDE_MAX)
+					write_hide = write_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_execve:
@@ -469,7 +478,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				execve_hide = execve_hide + 10000;
+				if(execve_hide + 1000 <= HIDE_MAX)
+					execve_hide = execve_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_wait4:
@@ -481,7 +491,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				wait4_hide = wait4_hide + 10000;
+				if(wait4_hide + 1000 <= HIDE_MAX)
+					wait4_hide = wait4_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_clone:
@@ -493,7 +504,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				clone_hide = clone_hide + 10000;
+				if(clone_hide + 1000 <= HIDE_MAX)
+					clone_hide = clone_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_select:
@@ -505,7 +517,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				select_hide = select_hide + 10000;
+				if(select_hide + 1000 <= HIDE_MAX)
+					select_hide = select_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_mmap:
@@ -517,7 +530,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				mmap_hide = mmap_hide + 10000;
+				if(mmap_hide + 1000 <= HIDE_MAX)
+					mmap_hide = mmap_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_getpid:
@@ -529,7 +543,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				getpid_hide = getpid_hide + 10000;
+				if(getpid_hide + 1000 <= HIDE_MAX)
+					getpid_hide = getpid_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			case __NR_gettid:
@@ -541,7 +556,8 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				gettid_hide = gettid_hide + 10000;
+				if(gettid_hide + 1000 <= HIDE_MAX)
+					gettid_hide = gettid_hide + 1000;
 				write_unlock(&w_lock);
 				break;
 			default:
