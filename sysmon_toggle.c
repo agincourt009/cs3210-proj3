@@ -19,7 +19,7 @@
 
 MODULE_LICENSE("GPL");
 #define MODULE_NAME "[sysmon] "
-#define HIDE_MAX 1000000
+#define HIDE_MAX 10000
 
 static bool init_write;
 
@@ -163,7 +163,7 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 {
 	int a, b, c;
 	unsigned long long temp;
-	if(!kprobe_toggle && current->uid == monitor_uid)
+	if(!kprobe_toggle && current->uid == monitor_uid && regs->rax == 21)
 	{
 		a = 72384;
 		b = 23241;
@@ -175,12 +175,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(brk_hide + 1000 <= HIDE_MAX)
-					brk_hide =brk_hide + 1000;
+				if(brk_hide + 1<= HIDE_MAX)
+					brk_hide =brk_hide + 1;
+				printk(KERN_INFO "===brk_hide: %llu\n", brk_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_chdir:
@@ -188,12 +188,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(chdir_hide + 1000 <= HIDE_MAX)
-					chdir_hide =chdir_hide + 1000;
+				if(chdir_hide + 1<= HIDE_MAX)
+					chdir_hide =chdir_hide + 1;
+				printk(KERN_INFO "===chdir_hide: %llu\n", chdir_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_close:
@@ -201,12 +201,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(close_hide + 1000 <= HIDE_MAX)
-					close_hide = close_hide + 1000;
+				if(close_hide + 1<= HIDE_MAX)
+					close_hide = close_hide + 1;
+				printk(KERN_INFO "===close_hide: %llu\n", close_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_dup:
@@ -214,12 +214,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(dup_hide + 1000 <= HIDE_MAX)
-					dup_hide = dup_hide + 1000;
+				if(dup_hide + 1<= HIDE_MAX)
+					dup_hide = dup_hide + 1;
+				printk(KERN_INFO "===dup_hide: %llu\n", dup_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_exit_group:
@@ -227,12 +227,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(exit_group_hide + 1000 <= HIDE_MAX)
-					exit_group_hide = exit_group_hide + 1000;
+				if(exit_group_hide + 1<= HIDE_MAX)
+					exit_group_hide = exit_group_hide + 1;
+				printk(KERN_INFO "===exit_group_hide: %llu\n", exit_group_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_fork:
@@ -240,12 +240,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(fork_hide + 1000 <= HIDE_MAX)
-					fork_hide = fork_hide + 1000;
+				if(fork_hide + 1<= HIDE_MAX)
+					fork_hide = fork_hide + 1;
+				printk(KERN_INFO "===fork_hide: %llu\n", fork_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_pipe:
@@ -253,12 +253,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(pipe_hide + 1000 <= HIDE_MAX)
-					pipe_hide = pipe_hide + 1000;
+				if(pipe_hide + 1<= HIDE_MAX)
+					pipe_hide = pipe_hide + 1;
+				printk(KERN_INFO "===pipe_hide: %llu\n", pipe_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_rmdir:
@@ -266,12 +266,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(rmdir_hide + 1000 <= HIDE_MAX)
-					rmdir_hide = rmdir_hide + 1000;
+				if(rmdir_hide + 1<= HIDE_MAX)
+					rmdir_hide = rmdir_hide + 1;
+				printk(KERN_INFO "===rmdir_hide: %llu\n", rmdir_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_access:
@@ -279,12 +279,13 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
+					printk("access\n");
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(access_hide + 1000 <= HIDE_MAX)
-					access_hide = access_hide + 1000;
+				if(access_hide + 1<= HIDE_MAX)
+					access_hide = access_hide + 1;
+				printk(KERN_INFO "===access_hide: %llu\n", access_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_chmod:
@@ -292,12 +293,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(chmod_hide + 1000 <= HIDE_MAX)
-					chmod_hide = chmod_hide + 1000;
+				if(chmod_hide + 1<= HIDE_MAX)
+					chmod_hide = chmod_hide + 1;
+				printk(KERN_INFO "===chmod_hide: %llu\n", chmod_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_dup2:
@@ -305,12 +306,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(dup2_hide + 1000 <= HIDE_MAX)
-					dup2_hide = dup2_hide + 1000;
+				if(dup2_hide + 1<= HIDE_MAX)
+					dup2_hide = dup2_hide + 1;
+				printk(KERN_INFO "===dup2_hide: %llu\n", dup2_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_mkdir:
@@ -318,12 +319,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(mkdir_hide + 1000 <= HIDE_MAX)
-					mkdir_hide = mkdir_hide + 1000;
+				if(mkdir_hide + 1<= HIDE_MAX)
+					mkdir_hide = mkdir_hide + 1;
+				printk(KERN_INFO "===mkdir_hide: %llu\n", mkdir_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_munmap:
@@ -331,12 +332,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(munmap_hide + 1000 <= HIDE_MAX)
-					munmap_hide = munmap_hide + 1000;
+				if(munmap_hide + 1<= HIDE_MAX)
+					munmap_hide = munmap_hide + 1;
+				printk(KERN_INFO "===munmap_hide: %llu\n", munmap_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_stat:
@@ -344,12 +345,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(stat_hide + 1000 <= HIDE_MAX)
-					stat_hide = stat_hide + 1000;
+				if(stat_hide + 1<= HIDE_MAX)
+					stat_hide = stat_hide + 1;
+				printk(KERN_INFO "===stat_hide: %llu\n", stat_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_fstat:
@@ -357,12 +358,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(fstat_hide + 1000 <= HIDE_MAX)
-					fstat_hide = fstat_hide + 1000;
+				if(fstat_hide + 1<= HIDE_MAX)
+					fstat_hide = fstat_hide + 1;
+				printk(KERN_INFO "===fstat_hide: %llu\n", fstat_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_lstat:
@@ -370,12 +371,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(lstat_hide + 1000 <= HIDE_MAX)
-					lstat_hide = lstat_hide + 1000;
+				if(lstat_hide + 1<= HIDE_MAX)
+					lstat_hide = lstat_hide + 1;
+				printk(KERN_INFO "===lstat_hide: %llu\n", lstat_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_fcntl:
@@ -383,12 +384,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(fcntl_hide + 1000 <= HIDE_MAX)
-					fcntl_hide = fcntl_hide + 1000;
+				if(fcntl_hide + 1<= HIDE_MAX)
+					fcntl_hide = fcntl_hide + 1;
+				printk(KERN_INFO "===fcntl_hide: %llu\n", fcntl_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_getdents:
@@ -396,12 +397,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(getdents_hide + 1000 <= HIDE_MAX)
-					getdents_hide = getdents_hide + 1000;
+				if(getdents_hide + 1<= HIDE_MAX)
+					getdents_hide = getdents_hide + 1;
+				printk(KERN_INFO "===getdents_hide: %llu\n", getdents_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_ioctl:
@@ -409,12 +410,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(ioctl_hide + 1000 <= HIDE_MAX)
-					ioctl_hide = ioctl_hide + 1000;
+				if(ioctl_hide + 1<= HIDE_MAX)
+					ioctl_hide = ioctl_hide + 1;
+				printk(KERN_INFO "===ioctl_hide: %llu\n", ioctl_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_lseek:
@@ -422,12 +423,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(lseek_hide + 1000 <= HIDE_MAX)
-					lseek_hide = lseek_hide + 1000;
+				if(lseek_hide + 1<= HIDE_MAX)
+					lseek_hide = lseek_hide + 1;
+				printk(KERN_INFO "===lseek_hide: %llu\n", lseek_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_open:
@@ -435,12 +436,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(open_hide + 1000 <= HIDE_MAX)
-					open_hide = open_hide + 1000;
+				if(open_hide + 1<= HIDE_MAX)
+					open_hide = open_hide + 1;
+				printk(KERN_INFO "===open_hide: %llu\n", open_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_read:
@@ -448,12 +449,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(read_hide + 1000 <= HIDE_MAX)
-					read_hide = read_hide + 1000;
+				if(read_hide + 1<= HIDE_MAX)
+					read_hide = read_hide + 1;
+				printk(KERN_INFO "===read_hide: %llu\n", read_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_write:
@@ -461,12 +462,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(write_hide + 1000 <= HIDE_MAX)
-					write_hide = write_hide + 1000;
+				if(write_hide + 1<= HIDE_MAX)
+					write_hide = write_hide + 1;
+				printk(KERN_INFO "===write_hide: %llu\n", write_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_execve:
@@ -474,12 +475,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(execve_hide + 1000 <= HIDE_MAX)
-					execve_hide = execve_hide + 1000;
+				if(execve_hide + 1<= HIDE_MAX)
+					execve_hide = execve_hide + 1;
+				printk(KERN_INFO "===execve_hide: %llu\n", execve_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_wait4:
@@ -487,12 +488,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(wait4_hide + 1000 <= HIDE_MAX)
-					wait4_hide = wait4_hide + 1000;
+				if(wait4_hide + 1<= HIDE_MAX)
+					wait4_hide = wait4_hide + 1;
+				printk(KERN_INFO "===wait4_hide: %llu\n", wait4_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_clone:
@@ -500,12 +501,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(clone_hide + 1000 <= HIDE_MAX)
-					clone_hide = clone_hide + 1000;
+				if(clone_hide + 1<= HIDE_MAX)
+					clone_hide = clone_hide + 1;
+				printk(KERN_INFO "===clone_hide: %llu\n", clone_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_select:
@@ -513,12 +514,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(select_hide + 1000 <= HIDE_MAX)
-					select_hide = select_hide + 1000;
+				if(select_hide + 1<= HIDE_MAX)
+					select_hide = select_hide + 1;
+				printk(KERN_INFO "===select_hide: %llu\n", select_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_mmap:
@@ -526,12 +527,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(mmap_hide + 1000 <= HIDE_MAX)
-					mmap_hide = mmap_hide + 1000;
+				if(mmap_hide + 1<= HIDE_MAX)
+					mmap_hide = mmap_hide + 1;
+				printk(KERN_INFO "===mmap_hide: %llu\n", mmap_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_getpid:
@@ -539,12 +540,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(getpid_hide + 1000 <= HIDE_MAX)
-					getpid_hide = getpid_hide + 1000;
+				if(getpid_hide + 1<= HIDE_MAX)
+					getpid_hide = getpid_hide + 1;
+				printk(KERN_INFO "===getpid_hide: %llu\n", getpid_hide);
 				write_unlock(&w_lock);
 				break;
 			case __NR_gettid:
@@ -552,12 +553,12 @@ static void sysmon_intercept_after(struct kprobe *kp, struct pt_regs *regs,
 				while(temp > 0)
 				{
 					a = a * b % c;
-					printk(KERN_INFO "post handler calculate a: %d\n", a);
 					temp--;
 				}//end while loop
 				write_lock(&w_lock);
-				if(gettid_hide + 1000 <= HIDE_MAX)
-					gettid_hide = gettid_hide + 1000;
+				if(gettid_hide + 1<= HIDE_MAX)
+					gettid_hide = gettid_hide + 1;
+				printk(KERN_INFO "===gettid_hide: %llu\n", gettid_hide);
 				write_unlock(&w_lock);
 				break;
 			default:
@@ -1153,36 +1154,36 @@ static int sysmon_toggle_write_proc(struct file *file, const char *buf, unsigned
 	{
 		kprobe_toggle = 0;
 		write_lock(&w_lock);
-		access_hide = 1000;
-		brk_hide = 1000;
-		chdir_hide = 1000;
-		chmod_hide = 1000;
-		clone_hide = 1000;
-		close_hide = 1000;
-		dup_hide = 1000;
-		dup2_hide = 1000;
-		execve_hide = 1000;
-		exit_group_hide = 1000;
-		fcntl_hide = 1000;
-		fork_hide = 1000;
-		getdents_hide = 1000;
-		getpid_hide = 1000;
-		gettid_hide = 1000;
-		ioctl_hide = 1000;
-		lseek_hide = 1000;
-		mkdir_hide = 1000;
-		mmap_hide = 1000;
-		munmap_hide = 1000;
-		open_hide = 1000;
-		pipe_hide = 1000;
-		read_hide = 1000;
-		rmdir_hide = 1000;
-		select_hide = 1000;
-		stat_hide = 1000;
-		fstat_hide = 1000;
-		lstat_hide = 1000;
-		wait4_hide = 1000;
-		write_hide = 1000;
+		access_hide = 1;
+		brk_hide = 1;
+		chdir_hide = 1;
+		chmod_hide = 1;
+		clone_hide = 1;
+		close_hide = 1;
+		dup_hide = 1;
+		dup2_hide = 1;
+		execve_hide = 1;
+		exit_group_hide = 1;
+		fcntl_hide = 1;
+		fork_hide = 1;
+		getdents_hide = 1;
+		getpid_hide = 1;
+		gettid_hide = 1;
+		ioctl_hide = 1;
+		lseek_hide = 1;
+		mkdir_hide = 1;
+		mmap_hide = 1;
+		munmap_hide = 1;
+		open_hide = 1;
+		pipe_hide = 1;
+		read_hide = 1;
+		rmdir_hide = 1;
+		select_hide = 1;
+		stat_hide = 1;
+		fstat_hide = 1;
+		lstat_hide = 1;
+		wait4_hide = 1;
+		write_hide = 1;
 		write_unlock(&w_lock);
 	}//end else if statement
 
@@ -1203,36 +1204,36 @@ static int __init sysmon_toggle_module_init(void){
 	kprobe_toggle = 0;
 	monitor_uid = -1;
 		
-	access_hide = 1000;
-	brk_hide = 1000;
-	chdir_hide = 1000;
-	chmod_hide = 1000;
-	clone_hide = 1000;
-	close_hide = 1000;
-	dup_hide = 1000;
-	dup2_hide = 1000;
-	execve_hide = 1000;
-	exit_group_hide = 1000;
-	fcntl_hide = 1000;
-	fork_hide = 1000;
-	getdents_hide = 1000;
-	getpid_hide = 1000;
-	gettid_hide = 1000;
-	ioctl_hide = 1000;
-	lseek_hide = 1000;
-	mkdir_hide = 1000;
-	mmap_hide = 1000;
-	munmap_hide = 1000;
-	open_hide = 1000;
-	pipe_hide = 1000;
-	read_hide = 1000;
-	rmdir_hide = 1000;
-	select_hide = 1000;
-	stat_hide = 1000;
-	fstat_hide = 1000;
-	lstat_hide = 1000;
-	wait4_hide = 1000;
-	write_hide = 1000;
+	access_hide = 1;
+	brk_hide = 1;
+	chdir_hide = 1;
+	chmod_hide = 1;
+	clone_hide = 1;
+	close_hide = 1;
+	dup_hide = 1;
+	dup2_hide = 1;
+	execve_hide = 1;
+	exit_group_hide = 1;
+	fcntl_hide = 1;
+	fork_hide = 1;
+	getdents_hide = 1;
+	getpid_hide = 1;
+	gettid_hide = 1;
+	ioctl_hide = 1;
+	lseek_hide = 1;
+	mkdir_hide = 1;
+	mmap_hide = 1;
+	munmap_hide = 1;
+	open_hide = 1;
+	pipe_hide = 1;
+	read_hide = 1;
+	rmdir_hide = 1;
+	select_hide = 1;
+	stat_hide = 1;
+	fstat_hide = 1;
+	lstat_hide = 1;
+	wait4_hide = 1;
+	write_hide = 1;
 
 	proc_entry = create_proc_entry("sysmon_toggle", 0766, NULL);
 	if(proc_entry == NULL)
