@@ -13,8 +13,8 @@
 
 int main(void)
 {
-	unsigned int syscall_number = 1024;
-	unsigned int epoch = 20;
+	unsigned int syscall_number = 128;
+	unsigned int epoch = 100;
 	unsigned int index_syscall = 0;
 	unsigned int index_epoch = 0;
 
